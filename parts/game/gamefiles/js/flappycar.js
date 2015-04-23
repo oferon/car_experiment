@@ -53,13 +53,22 @@ function hideRatingDialog()
 
 function saveRatingDialog(client_score)
 {
-    var state2=(session*10);
+    var state2 = (session * 10);
     var client = new XMLHttpRequest();
     var postdata = "action=" + encodeURIComponent(unescape(client_score)) + "&state=" + encodeURIComponent(unescape(state2));
     client.open("POST", "gamefiles/php/saveClickData.php");
-    client.setRequestHeader('Content-Type','application/x-www-form-urlencoded'); 
+    client.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     client.send(postdata);
+
+    var boxes = document.getElementsByClassName("score_cbox");
     
+    for (var i = 0; i < boxes.length; i++)
+    {
+        boxes[i].checked = false;
+    }
+
+
+
     var dialog = document.getElementById("rating_dialog");
     dialog.style.display = "none";
     isGamePaused = false;
