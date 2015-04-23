@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style>
+.error {color: #FF0000;}
+</style>
+<title>Survey 8</title>
+</head>
+<body>
+<form id="form1" name="form1" method="post" action="./gamefiles/php/saveSurvey8.php">
+  <p><strong>Thanks for completing the eight'th session of our simulation game -- only two more and you are done! Please answer the following required question:</strong></p>
+
+<input type="hidden" name="survey_id" value="8">
+ <p> <span class="error"> {{form_error}} </span> </p>
+  <p>1. <strong>(required)</strong> Would you recommend the shuttle services to other players? <span class="error"> * {{errors.Q1}} </span> </p>
+  <p>
+    <label>
+      <input type="radio" name="Q1" value="No" id="Q1_1" />
+    No</label>
+    <br />
+    <label>
+      <input type="radio" name="Q1" value="Unlikely" id="Q1_2" />
+      Unlikely</label>
+    <br />
+    <label>
+      <input type="radio" name="Q1" value="Maybe" id="Q1_3" />
+      Maybe</label>
+    <br />
+    <label>
+      <input type="radio" name="Q1" value="Probably" id="Q1_4" />
+      Probably</label>
+    <br />
+    <label>
+      <input type="radio" name="Q1" value="Yes" id="Q1_5" />
+      Yes</label>
+    <br />
+  </p>
+
+  
+<p>
+  <input type="submit" name="button" id="button" value="Submit" />
+  <br />
+</p>
+  <p></p>
+<p>&nbsp;</p>
+</form>
+</body>
+</html>
+

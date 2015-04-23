@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style>
+.error {color: #FF0000;}
+</style>
+<title>Survey 9</title>
+</head>
+<body>
+<form id="form1" name="form1" method="post" action="./gamefiles/php/saveSurvey9.php">
+  <p><strong>Thanks for completing the nine'th session of our simulation game -- just one more... Answering the questions below will help us improve the shuttle services</strong></p>
+
+  <input type="hidden" name="survey_id" value="9">
+   <p> <span class="error"> {{form_error}} </span> </p>
+  <p>1. <strong>(required)</strong> Would you recommend the shuttle services to other players? <span class="error"> * {{errors.Q1}} </span> </p>
+  <p>
+    <label>
+      <input type="radio" name="Q1" value="No" id="Q1_1" />
+    No</label>
+    <br />
+    <label>
+      <input type="radio" name="Q1" value="Unlikely" id="Q1_2" />
+      Unlikely</label>
+    <br />
+    <label>
+      <input type="radio" name="Q1" value="Maybe" id="Q1_3" />
+      Maybe</label>
+    <br />
+    <label>
+      <input type="radio" name="Q1" value="Probably" id="Q1_4" />
+      Probably</label>
+    <br />
+    <label>
+      <input type="radio" name="Q1" value="Yes" id="Q1_5" />
+      Yes</label>
+    <br />
+  </p>
+
+
+  <p><strong>Optional questions: </strong></p>
+  <p>Please rate the following components of shuttle services</p>
+
+
+  <p>2. (<strong>optional</strong>) Waiting time for the shuttle was <span class="error">  {{errors.Q2}} </span> </p>
+  <p>
+    <label>
+      <input type="radio" name="Q2" value="Much too long" id="Q2_1" />
+      Much too long</label>
+    <br />
+    <label>
+      <input type="radio" name="Q2" value="Often too long" id="Q2_2" />
+      Often too long</label>
+    <br />
+    <label>
+      <input type="radio" name="Q2" value="Sometimes too long" id="Q2_3" />
+      Sometimes too long</label>
+    <br />
+    <label>
+      <input type="radio" name="Q2" value="Usually okay" id="Q2_4" />
+      Usually okay</label>
+    <br />
+    <label>
+      <input type="radio" name="Q2" value="Fine" id="Q2_5" />
+      Fine</label>
+    <br />
+  </p>
+  <p>&nbsp;</p>
+
+
+  <p>3. (<strong>optional</strong>) Shuttle travel time was <span class="error">  {{errors.Q3}} </span>  </p>
+  <p>
+    <label>
+      <input type="radio" name="Q3" value="Much too long" id="Q3_1" />
+      Much too long</label>
+    <br />
+    <label>
+      <input type="radio" name="Q3" value="Often too long" id="Q3_2" />
+      Often too long</label>
+    <br />
+    <label>
+      <input type="radio" name="Q3" value="Sometimes too long" id="Q3_3" />
+      Sometimes too long</label>
+    <br />
+    <label>
+      <input type="radio" name="Q3" value="Usually okay" id="Q3_4" />
+      Usually okay</label>
+    <br />
+    <label>
+      <input type="radio" name="Q3" value="Fine" id="Q3_5" />
+      Fine</label>
+  </p>
+  <p>&nbsp;</p>
+
+
+  <p>4.(<strong>optional</strong>) In your opinion, what type of investment in shuttle services would be most desired? <span class="error">  {{errors.Q4}} </span> </p>
+  <p>
+    <label>
+      <input type="radio" name="Q4" value="ore shuttles" id="Q4_1" /></label>
+  More shuttles (shorter waiting time)<br />
+    <label>
+      <input type="radio" name="Q4" value="Faster shuttles" id="Q4_2" />
+      Faster shuttles</label>
+  </p>
+  <p>&nbsp;</p>
+
+
+  <p>5. (<strong>optional</strong>) How many coins would you be willing to pay for riding a faster shuttle? <span class="error">  {{errors.Q5}} </span> </p>
+  <p>
+    <label>
+      <input type="radio" name="Q5" value="None" id="Q5_1" />
+      None</label>
+    <br />
+    <label>
+      <input type="radio" name="Q5" value="1 coin per ride" id="Q5_2" />
+      1 coin per ride</label>
+    <br />
+    <label>
+      <input type="radio" name="Q5" value="4 coins per session" id="Q5_3" />
+      4 coins per session (5 rides pass) </label>
+    <br />
+    <label>
+      <input type="radio" name="Q5" value="6 coins per session (5 rides) with shorter waiting time" id="Q5_4" />
+      6 coins per session (5 rides) with shorter waiting time (less than 5 seconds) </label>
+    <br />
+    <label>
+      <input type="radio" name="Q2" value="4 coins per ride" id="Q5_5" />
+      4 coins per ride</label></p>
+  <p>&nbsp;</p>
+
+
+
+  <p>6. (<strong>optional</strong>) How many coins would you be willing to pay for a shorter waiting time for shuttles? <span class="error">  {{errors.Q6}} </span> </p>
+  <p>
+    <label>
+      <input type="radio" name="Q6" value="None" id="Q6_1" />
+      None</label>
+    <br />
+    <label>
+      <input type="radio" name="Q6" value="1 coin per ride for waiting less than 10 seconds" id="Q6_2" />
+      1 coin per ride for waiting less than 10 seconds </label>
+    <br />
+    <label>
+      <input type="radio" name="Q6" value="2 coins per ride for waiting less than 5 seconds" id="Q6_3" />
+      2 coins per ride for waiting less than 5 seconds</label>
+    <br />
+    <label>
+      <input type="radio" name="Q6" value="4 coins per session (5 rides) for waiting less than 5 seconds" id="Q6_4" />
+      4 coins per session (5 rides) for waiting less than 5 seconds </label>
+    <br />
+    <label>
+      <input type="radio" name="Q6" value="6 coins per session (5 rides) for waiting less than 5 seconds and riding a fast shuttle" id="Q6_5" />
+      6 coins per session (5 rides) for waiting less than 5 seconds and riding a fast shuttle </label>
+  </p>
+  <p>&nbsp;</p>
+  
+<p>
+  <input type="submit" name="button" id="button" value="Submit" />
+  <br />
+</p>
+  <p></p>
+<p>&nbsp;</p>
+</form>
+</body>
+</html>
+
