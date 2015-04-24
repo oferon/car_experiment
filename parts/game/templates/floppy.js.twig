@@ -993,25 +993,25 @@ function showGameCanvas()
 
 function get_performance() // choice will return 1 for shuttle and 2 for detour
 {
-   
-    var client = new XMLHttpRequest();
-    client.open("POST", "gamefiles/php/retrieve_performance.php");
-    client.setRequestHeader('Content-Type','application/x-www-form-urlencoded'); 
-    client.send(postdata);
-    // retrieve the json
-    // parse the json
-    
-   
-        client.onreadystatechange = function() {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                client.responseText // need to parse...
-            }
-        }
-   
-    
+
+var client = new XMLHttpRequest();
+client.open("POST", "gamefiles/php/retrieve_performance.php");
+client.setRequestHeader('Content-Type','application/x-www-form-urlencoded'); 
+client.send(postdata);
+// retrieve the json
+// parse the json
+
+
+client.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        client.responseText // need to parse...
+    }
+}
+
+
 // use the number to set performance
-    
-   shuttle_wait=shuttle_wait_med; 
-   shuttle_speed=shuttle_speed_high; 
+
+shuttle_wait=shuttle_wait_med; 
+shuttle_speed=shuttle_speed_high; 
 }
 

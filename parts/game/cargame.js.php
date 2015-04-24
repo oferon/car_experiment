@@ -97,4 +97,5 @@ $session_array = array("session_number"=>$session_number,"survey_url"=>$dest, "g
 $loader = new Twig_Loader_Filesystem(__DIR__ . '/templates');
 $twig_env = new Twig_Environment($loader);
 $tmpl = $twig_env->loadTemplate($template_name);
+header('Content-Type: application/javascript');
 echo $tmpl->render($session_array);
