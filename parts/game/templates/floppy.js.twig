@@ -863,7 +863,7 @@ function report_score(score)
     function set_shuttle_performance() // choice will return 1 for shuttle and 2 for detour
     { 
         
-        //get_performance();
+        get_performance();
         
         switch(session){
             case 1: 
@@ -995,23 +995,23 @@ function get_performance() // choice will return 1 for shuttle and 2 for detour
 {
 
 var client = new XMLHttpRequest();
-client.open("POST", "gamefiles/php/retrieve_performance.php");
-client.setRequestHeader('Content-Type','application/x-www-form-urlencoded'); 
-client.send(postdata);
+client.open("GET","gamefiles/php/retrieve_performance.php" + Math.random(),true); //Math.random is used to make the URL unique to prevent caching
+client.send();
+//client.send(postdata);
 // retrieve the json
 // parse the json
 
-
+var xxx;
 client.onreadystatechange = function() {
-    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        client.responseText // need to parse...
+    if (client.readyState == 4 && client.status == 200) {
+        xxx=client.responseText; // need to parse...
     }
 }
 
 
 // use the number to set performance
 
-shuttle_wait=shuttle_wait_med; 
-shuttle_speed=shuttle_speed_high; 
+//shuttle_wait=shuttle_wait_med; 
+//shuttle_speed=shuttle_speed_high; 
 }
 

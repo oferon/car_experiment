@@ -94,7 +94,7 @@ class GameDataCtrl extends DataCtrl {
     function get_performance()
     {
         // querrys... 
-        return $performance;
+        return 3;//$performance;
         
         
     }
