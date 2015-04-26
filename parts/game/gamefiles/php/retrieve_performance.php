@@ -29,19 +29,6 @@ if( !isset($_SESSION['user_id'])){
 
 $user_id = $_SESSION['user_id'];
 
-//Check the $_POST['action']
-if (isset($_POST['action']) && !empty($_POST['action'])) {
-    $action = $_POST['action'];
-} else {
-    $msg_sender->onError(null, "Action missing");
-}
-
-//Check the $_POST['state']
-if (isset($_POST['state']) && !empty($_POST['state'])) {
-    $state = $_POST['state'];
-} else {
-    $msg_sender->onError(null, "Game state missing");
-}
 
 try {
     //Create the datahandler and insert the data

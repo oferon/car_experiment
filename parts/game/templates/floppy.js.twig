@@ -18,6 +18,7 @@ isGamePaused = false,
 frameid,
 canvas,
 ctx,
+xxx,
 width,
 height,
 car_offset=0,
@@ -995,13 +996,13 @@ function get_performance() // choice will return 1 for shuttle and 2 for detour
 {
 
 var client = new XMLHttpRequest();
-client.open("GET","gamefiles/php/retrieve_performance.php" + Math.random(),true); //Math.random is used to make the URL unique to prevent caching
+client.open("GET","gamefiles/php/retrieve_performance.php"); //Math.random is used to make the URL unique to prevent caching
 client.send();
 //client.send(postdata);
 // retrieve the json
 // parse the json
 
-var xxx;
+xxx=5;
 client.onreadystatechange = function() {
     if (client.readyState == 4 && client.status == 200) {
         xxx=client.responseText; // need to parse...

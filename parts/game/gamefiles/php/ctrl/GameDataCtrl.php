@@ -93,8 +93,23 @@ class GameDataCtrl extends DataCtrl {
     
     function get_performance()
     {
-        // querrys... 
-        return 3;//$performance;
+        //scores submitted during last minute: 
+        $scores_submitted="select count(*) from flappy_car where time-( now() - INTERVAL 2 minute)>0 and user_action<10; ";
+        $shuttle_choices="select count(*) from flappy_car where time-( now() - INTERVAL 2 minute)>0 and user_action=3000; ";
+        $detour_choices="select count(*) from flappy_car where time-( now() - INTERVAL 2 minute)>0 and user_action=2000; ";
+        
+        $scores_num = $mysqli->query($scores_submitted);
+        $rides_num = $mysqli->query($shuttle_choices);
+        $detours_num = $mysqli->query($detour_choices);
+        
+        if($scores_num)$performance=$scores_num/($rides_num+$detours_num);
+        else $performance=0;
+        
+        $scores_num->close();
+        $rides_num->close();
+        $detours_num->close();
+         
+        return $performance;
         
         
     }
