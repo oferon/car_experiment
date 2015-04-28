@@ -15,10 +15,12 @@ action_codes = { coin_collect: 1000,  shuttle_choice_detour : 2000, shuttle_choi
 rnd,
 new_junction=false,
 isGamePaused = false,
+popup=false,
+feedbacks,
+feedbacks_num,
 frameid,
 canvas,
 ctx,
-xxx,
 width,
 height,
 car_offset=0,
@@ -41,11 +43,11 @@ trial_time=0,
 
 // version 2
 shuttle_speed_low=1, 
-shuttle_speed_med=2,
-shuttle_speed_high=3,
-shuttle_wait_long=500,
-shuttle_wait_med=350,
-shuttle_wait_short=100,
+shuttle_speed_med=2.5,
+shuttle_speed_high=4,
+shuttle_wait_long=700,
+shuttle_wait_med=250,
+shuttle_wait_short=20,
 
 // version 1
 /*
@@ -675,26 +677,29 @@ if(x_offset<w5) x_offset++;
 
     if(junction_choice){ // the car is now at the junction, with car offset lifting it slightly until it reaches the right position waiting 
 
-    s_junction.drawX(ctx,  0, height - 500, x_offset, 0); // we now draw the buttons of the 'shuttle' and 'detour' when the car is waiting:
-    //s_buttons.Shuttle.draw(ctx, shuttlebtn.x, shuttlebtn.y);
-    s_buttons.Detour.draw(ctx, detourbtn.x, detourbtn.y);
+        s_junction.drawX(ctx,  0, height - 500, x_offset, 0); // we now draw the buttons of the 'shuttle' and 'detour' when the car is waiting:
+        s_buttons.Detour.draw(ctx, detourbtn.x, detourbtn.y);
+        s_buttons.Shuttle.draw(ctx, shuttlebtn.x, shuttlebtn.y);
 
-    if(new_junction) {
-    if(session===1)rnd=6;
-    else rnd=Math.floor((Math.random() * 2) + 1); 
-    new_junction=false;
-    Report_user_action(100*rnd, stage-1);
-    }
-    switch(rnd)
-    {
-    case 1: s_buttons.Shuttle_1star.draw(ctx, shuttlebtn.x, shuttlebtn.y); break;
-    case 2: s_buttons.Shuttle_2stars.draw(ctx, shuttlebtn.x, shuttlebtn.y); break;
-    case 3: s_buttons.Shuttle_3stars.draw(ctx, shuttlebtn.x, shuttlebtn.y); break;
-    case 4: s_buttons.Shuttle_4stars.draw(ctx, shuttlebtn.x, shuttlebtn.y); break;
-    case 5: s_buttons.Shuttle_5stars.draw(ctx, shuttlebtn.x, shuttlebtn.y); break;
-    case 6: s_buttons.Shuttle.draw(ctx, shuttlebtn.x, shuttlebtn.y); break;
-    }
-    //s_buttons.Shuttle_1star.draw(ctx, shuttlebtn.x, shuttlebtn.y);
+        if(new_junction) {
+            //s_buttons.Shuttle.draw(ctx, shuttlebtn.x, shuttlebtn.y);
+            new_junction=false;
+            Report_user_action(100*rnd, stage-1);
+        }
+        /*
+        if(session===1)rnd=6;
+        else rnd=Math.floor((Math.random() * 2) + 1);         
+        switch(rnd)
+        {
+            case 1: s_buttons.Shuttle_1star.draw(ctx, shuttlebtn.x, shuttlebtn.y); break;
+            case 2: s_buttons.Shuttle_2stars.draw(ctx, shuttlebtn.x, shuttlebtn.y); break;
+            case 3: s_buttons.Shuttle_3stars.draw(ctx, shuttlebtn.x, shuttlebtn.y); break;
+            case 4: s_buttons.Shuttle_4stars.draw(ctx, shuttlebtn.x, shuttlebtn.y); break;
+            case 5: s_buttons.Shuttle_5stars.draw(ctx, shuttlebtn.x, shuttlebtn.y); break;
+            case 6: s_buttons.Shuttle.draw(ctx, shuttlebtn.x, shuttlebtn.y); break;
+        }
+        */
+   
 
     } 
 
@@ -706,10 +711,10 @@ if(x_offset<w5) x_offset++;
     if(junction_shuttle_positioning){ // we now deal with moving the car up, and the image right to place the care at the loading dock waiting spot
     var w2=width/1.2;
     if(x_offset<w2) {
-        x_offset++;
+        x_offset+=2;
         bird.rotation=-0.4;
         s_junction.drawX(ctx, 0, height - 500, x_offset, 0);
-        if(car_offset>-190)car_offset--;
+        if(car_offset>-190)car_offset-=2;
         }
         else { 
         bird.rotation=0; 
@@ -753,7 +758,7 @@ if(x_offset<w5) x_offset++;
             junction_wait_for_shuttle=false;
             
             currentstate = states.Game;
-            showDialog();
+            if(popup) showDialog();
             }
             }
             else {
@@ -774,7 +779,7 @@ if(x_offset<w5) x_offset++;
             //s_junction.drawX(ctx, 0, height - 500, second_x_offset*1.22, second_x_offset*1.7);
             s_junction.drawX(ctx, 0, 0, second_x_offset*1.22, second_x_offset*1.7);
             //if(second_x_offset<height*1.1) second_x_offset+=0.4;
-                if(second_x_offset<530) second_x_offset+=3;//1.6;
+                if(second_x_offset<530) second_x_offset+=1.6;// 3;
                 else{junction_taking_detour1=false; junction_taking_detour2=true;}
                 }
 
@@ -831,7 +836,7 @@ if(x_offset<w5) x_offset++;
                         if(currentstate!=states.Junction) s_numberB.draw(ctx, null, 20, score, width2);
                         }
                         bird.draw(ctx);
-                        }
+}
 
 
 
@@ -864,106 +869,17 @@ function report_score(score)
     function set_shuttle_performance() // choice will return 1 for shuttle and 2 for detour
     { 
         
-        get_performance();
         
-        switch(session){
-            case 1: 
-            // medium perofmrnace
-            if(ind===1) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_med; }
-            else if(ind===2) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_high; }
-            else if(ind===3) {shuttle_wait=shuttle_wait_long; shuttle_speed=shuttle_speed_low; }
-            else if(ind===4) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_high; }
-            else  {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_low;}
-            break;
-
-            case 2:      
-            // bad performance:
-            if(ind===1) {shuttle_wait=shuttle_wait_long; shuttle_speed=shuttle_speed_low; }
-            else if(ind===2) {shuttle_wait=shuttle_wait_long; shuttle_speed=shuttle_speed_low; }
-            else if(ind===3) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_high; }
-            else if(ind===4) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_med; }
-            else  {shuttle_wait=shuttle_wait_long; shuttle_speed=shuttle_speed_low; }
-            break;
-
-            case 3: 
-            // great performance:    
-            if(ind===1) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_high;}
-            else if(ind===2) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_med;}
-            else if(ind===3) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_high;}
-            else if(ind===4) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_med;}
-            else  {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_high; }
-            break;
-
-            case 4: 
-            // medium performance:    
-            if(ind===1) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_med; }
-            else if(ind===2) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_high; }
-            else if(ind===3) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_high; }
-            else if(ind===4) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_med; }
-            else  {shuttle_wait=shuttle_wait_long; shuttle_speed=shuttle_speed_low; }
-            break;
-
-
-
-            // bad performance:
-            //  if(ind===1) {shuttle_wait=shuttle_wait_long; shuttle_speed=shuttle_speed_low; }
-            //   else if(ind===2) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_low; }
-            //  else if(ind===3) {shuttle_wait=shuttle_wait_long; shuttle_speed=shuttle_speed_low; }
-            //  else if(ind===4) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_med; }
-            //   else  {shuttle_wait=shuttle_wait_long; shuttle_speed=shuttle_speed_low; }
-            // break;
-
-
-            // great performance:    
-            case 5: 
-            if(ind===1) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_high;}
-            else if(ind===2) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_med;}
-            else if(ind===3) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_high;}
-            else if(ind===4) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_med;}
-            else  {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_high; }
-            break;
-
-            case 6: 
-            if(ind===1) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_high;}
-            else if(ind===2) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_high; }
-            else if(ind===3) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_med;}
-            else if(ind===4) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_med;}
-            else  {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_high;}
-            break;
-
-            // random performance:
-
-
-            case 7: 
-            if(ind===1) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_med; }
-            else if(ind===2) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_high; }
-            else if(ind===3) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_high; }
-            else if(ind===4) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_med; }
-            else  {shuttle_wait=shuttle_wait_long; shuttle_speed=shuttle_speed_low; }
-            break;
-
-            case 8: 
-            if(ind===1) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_high; }
-            else if(ind===2) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_high; }
-            else if(ind===3) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_low; }
-            else if(ind===4) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_low;}
-            else  {shuttle_wait=shuttle_wait_long; shuttle_speed=shuttle_speed_high;}
-
-            case 9: 
-            if(ind===1) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_med; }
-            else if(ind===2) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_high; }
-            else if(ind===3) {shuttle_wait=shuttle_wait_long; shuttle_speed=shuttle_speed_low; }
-            else if(ind===4) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_high; }
-            else  {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_low; }
-            break;
-
-            case 10: 
-            if(ind===1) {shuttle_wait=shuttle_wait_long; shuttle_speed=shuttle_speed_high; }
-            else if(ind===2) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_low; }
-            else if(ind===3) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_high; }
-            else if(ind===4) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_med;}
-            else  {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_high;}
+        if(session===1)
+        {
+           if(ind===1) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_med; popup=false; }
+            else if(ind===2) {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_high; popup=true; }
+            else if(ind===3) {shuttle_wait=shuttle_wait_long; shuttle_speed=shuttle_speed_high; popup=false;}
+            else if(ind===4) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_low; popup=true; }
+            else  {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_low;popup=false; } 
         }
+        else get_performance();
+        
         ind++;
     }
     
@@ -994,25 +910,43 @@ function showGameCanvas()
 
 function get_performance() // choice will return 1 for shuttle and 2 for detour
 {
-
+feedbacks_num=0;
 var client = new XMLHttpRequest();
 client.open("GET","gamefiles/php/retrieve_performance.php"); //Math.random is used to make the URL unique to prevent caching
 client.send();
-//client.send(postdata);
-// retrieve the json
-// parse the json
-
-xxx=5;
 client.onreadystatechange = function() {
     if (client.readyState == 4 && client.status == 200) {
-        xxx=client.responseText; // need to parse...
+        feedbacks=client.responseText; // need to parse...
+        var obj = JSON.parse(feedbacks);
+        feedbacks_num=Number(obj.data);
+        
+                // use the number to set performance
+        if(feedbacks_num>0.7)
+        {
+          shuttle_wait=shuttle_wait_short; 
+          shuttle_speed=shuttle_speed_high;
+        }
+
+        else if(feedbacks_num>0.4)
+        {
+          shuttle_wait=shuttle_wait_med; 
+          shuttle_speed=shuttle_speed_med;  
+        }
+
+        else
+        {
+          shuttle_wait=shuttle_wait_long; 
+          shuttle_speed=shuttle_speed_low;  
+        }
+
+
+        popup=true;
+        
+        
     }
 }
 
 
-// use the number to set performance
 
-//shuttle_wait=shuttle_wait_med; 
-//shuttle_speed=shuttle_speed_high; 
 }
 

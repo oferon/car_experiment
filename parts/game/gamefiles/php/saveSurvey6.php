@@ -42,7 +42,8 @@ unset($_SESSION['form_err']); // clear main form error
 $fields = [];
 $fields[] = new FormField('survey_id',null,false);
 $fields[] = new FormField('Q1',null,true);
-
+$fields[] = new FormField('Q2',null,true);
+$fields[] = new FormField('Q3',null,true);
 
 
 

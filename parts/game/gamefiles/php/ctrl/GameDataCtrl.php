@@ -93,24 +93,67 @@ class GameDataCtrl extends DataCtrl {
     
     function get_performance()
     {
-        //scores submitted during last minute: 
-        $scores_submitted="select count(*) from flappy_car where time-( now() - INTERVAL 2 minute)>0 and user_action<10; ";
-        $shuttle_choices="select count(*) from flappy_car where time-( now() - INTERVAL 2 minute)>0 and user_action=3000; ";
-        $detour_choices="select count(*) from flappy_car where time-( now() - INTERVAL 2 minute)>0 and user_action=2000; ";
+        //scores submitted during last 2 minutes: 
+        $scores_submitted="select count(*) from U311.flappy_car where time-( now() - INTERVAL 2 minute)>0 and user_action<10 and user_action>0; ";
+        if( ! $stmt = mysqli_prepare($this->mysqli_con, $scores_submitted)){
+            $this->throwDBError($this->mysqli_con->error, $this->mysqli_con->errno);
+        }
+        if( ! mysqli_stmt_execute($stmt)){
+            $this->throwDBError($this->mysqli_con->error, $this->mysqli_con->errno);
+        }
+        $scores_num = null;
         
-        $scores_num = $mysqli->query($scores_submitted);
-        $rides_num = $mysqli->query($shuttle_choices);
-        $detours_num = $mysqli->query($detour_choices);
+        if( ! mysqli_stmt_bind_result($stmt, $scores_num)){
+            $this->throwDBError($this->mysqli_con->error, $this->mysqli_con->errno);
+        }      
+       mysqli_stmt_fetch($stmt);
+       mysqli_stmt_close($stmt);
+
+       
+       //shuttle choices during last 2 minutes: 
+       $shuttle_choices="select count(*) from flappy_car where time-( now() - INTERVAL 2 minute)>0 and user_action=3000; ";
+        if( ! $stmt = mysqli_prepare($this->mysqli_con, $shuttle_choices)){
+            $this->throwDBError($this->mysqli_con->error, $this->mysqli_con->errno);
+        }
+        if( ! mysqli_stmt_execute($stmt)){
+            $this->throwDBError($this->mysqli_con->error, $this->mysqli_con->errno);
+        }
+        $rides_num = null;
         
+        if( ! mysqli_stmt_bind_result($stmt, $rides_num)){
+            $this->throwDBError($this->mysqli_con->error, $this->mysqli_con->errno);
+        }      
+       mysqli_stmt_fetch($stmt);
+       mysqli_stmt_close($stmt); 
+       
+       
+       
+       //detour choices during last 2 minutes: 
+       $detour_choices="select count(*) from flappy_car where time-( now() - INTERVAL 2 minute)>0 and user_action=2000; ";
+       if( ! $stmt = mysqli_prepare($this->mysqli_con, $detour_choices)){
+            $this->throwDBError($this->mysqli_con->error, $this->mysqli_con->errno);
+        }
+        if( ! mysqli_stmt_execute($stmt)){
+            $this->throwDBError($this->mysqli_con->error, $this->mysqli_con->errno);
+        }
+        $detours_num = null;
+        
+        if( ! mysqli_stmt_bind_result($stmt, $detours_num)){
+            $this->throwDBError($this->mysqli_con->error, $this->mysqli_con->errno);
+        }      
+       mysqli_stmt_fetch($stmt);
+       mysqli_stmt_close($stmt);  
+        
+        
+       
+       
         if($scores_num)$performance=$scores_num/($rides_num+$detours_num);
         else $performance=0;
         
-        $scores_num->close();
-        $rides_num->close();
-        $detours_num->close();
          
         return $performance;
-        
+       
+        //return 3;
         
     }
 

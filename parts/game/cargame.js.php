@@ -47,14 +47,14 @@ switch ($session_number) {
         break;
 
     case 4:
-        //$dest = './survey4.php';
-        $dest = './survey_final.php';
+        $dest = './survey4.php';
+        //$dest = './survey_final.php';
 
         break;
 
     case 5:
-        //$dest = './survey5.php';
-        $dest = './survey_final.php';
+        $dest = './survey5.php';
+        //$dest = './survey_final.php';
 
         break;
 

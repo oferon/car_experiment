@@ -18,7 +18,7 @@
 	<title>FlappyJS - Browser Version of FlappyBird</title>
 	<link rel="stylesheet" href="./gamefiles/css/style.css"/>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <script src="./gamefiles/js/jquery-ui/jquery-ui.js"></script>
+        
 	<script src="./gamefiles/js/sprite.js"></script>
         <script src="./gamefiles/js/flappycar.js"></script>
 	<script src="./cargame.js.php"></script>
@@ -47,7 +47,7 @@
            <!--  <div style="text-align: center;font-size: large">1 2 3 4 5</div> -->
             <div style="text-align: right">
                 <span class="rating_txt">Do not show again</span>
-                <input type="checkbox" id="rating_c_box" onclick="hideRatingDialog()" >
+                <input type="checkbox" id="rating_c_box" onclick="saveRatingDialog(-999)" >
             </div>
         </div>
 <input type="button" onclick="showDialog();" value="Show dialog"/>
