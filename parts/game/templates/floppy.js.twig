@@ -912,6 +912,7 @@ function showGameCanvas()
 function get_performance() // choice will return 1 for shuttle and 2 for detour
 {
 feedbacks_num=0;
+popup={{ show_popup }};
 var client = new XMLHttpRequest();
 client.open("GET","gamefiles/php/retrieve_performance.php"); //Math.random is used to make the URL unique to prevent caching
 client.send();
@@ -941,7 +942,7 @@ client.onreadystatechange = function() {
         }
 
 
-        popup={{ show_popup }};
+        
         
         
     }

@@ -17,9 +17,11 @@ $msg_sender = new JSONMessageSender();
 use carexperiment\GameDataCtrl as GameDataCtrl;
 
 
-if(isset($_POST['show_popup']))
+if(isset($_POST['popup']))
 {
-    $_SESSION['show_popup'] = $_POST['show_popup'];
+    $popup=$_POST['popup'];
+    $_SESSION['show_popup'] = $popup;
+    
 }
 
 /*

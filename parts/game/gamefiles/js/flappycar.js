@@ -62,10 +62,12 @@ function saveRatingDialog(client_score)
     
     if(client_score===-999) // user decided to bail out...
     {
-        var data= { show_popup : 76 };
+        var yyy=0;
         var client = new XMLHttpRequest();
-        client.open("POST","gamefiles/php/setShowPopup.php");  
-        client.send(data);  
+        var postdata = "popup=" + encodeURIComponent(unescape(yyy));
+        client.open("POST", "gamefiles/php/setShowPopup.php");
+        client.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        client.send(postdata);       
     }
     
 
