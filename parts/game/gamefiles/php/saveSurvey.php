@@ -88,10 +88,27 @@ try {
     exit();
     
 }
-$user_choice=$fields[3]->GetValue;
-if($user_choice="Yes") $_SESSION['show_popup'] = 1;
-else $_SESSION['show_popup'] = 0;
 
+
+
+foreach( $fields as $field )
+{
+    $fname = $field->getName();
+    if(strcmp($fname, "Q3") == 0)
+    {
+       $fval = $field->getValue(); 
+       if(strcmp($fval, "Yes") == 0) {$_SESSION['show_popup'] = 8;}
+       else {$_SESSION['show_popup'] = 0;}
+    }
+       
+}
+
+
+/*
+$user_choice=$fields[3]->GetValue;
+if (strcmp($user_choice, "Yes") == 0) $_SESSION['show_popup'] = 8;
+else $_SESSION['show_popup'] = 0;
+*/
 
 $_SESSION['session_num'] = 2;
 
