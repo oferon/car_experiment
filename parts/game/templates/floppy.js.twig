@@ -15,7 +15,6 @@ action_codes = { coin_collect: 1000,  shuttle_choice_detour : 2000, shuttle_choi
 rnd,
 new_junction=false,
 isGamePaused = false,
-popup=false,
 feedbacks,
 feedbacks_num,
 frameid,
@@ -61,6 +60,7 @@ shuttle_wait_short=100,
 ind=1, // index to shuttle choices (first, second, etc.)
 
 session={{ session_number }},
+popup={{ show_popup }},
 
 
 // these are the state variables of the car around the lake: 
@@ -758,6 +758,7 @@ if(x_offset<w5) x_offset++;
             junction_wait_for_shuttle=false;
             
             currentstate = states.Game;
+            popup={{ show_popup }};
             if(popup) showDialog();
             }
             }
@@ -940,7 +941,7 @@ client.onreadystatechange = function() {
         }
 
 
-        popup=true;
+        popup={{ show_popup }};
         
         
     }

@@ -88,6 +88,9 @@ try {
     exit();
     
 }
+$user_choice=$fields[3]->GetValue;
+if($user_choice="Yes") $_SESSION['show_popup'] = 34;
+
 
 $_SESSION['session_num'] = 2;
 

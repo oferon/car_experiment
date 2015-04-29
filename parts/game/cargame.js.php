@@ -27,6 +27,10 @@ if( isset($_SESSION['session_num']) && is_numeric($_SESSION['session_num'])){
     $session_number = $_SESSION['session_num'];
 }
 
+if( isset($_SESSION['show_popup']) && is_numeric($_SESSION['show_popup'])){
+    $show_popup = $_SESSION['show_popup'];
+}
+
 
 
 $dest = './survey.php';
@@ -91,7 +95,7 @@ switch ($session_number) {
 }
 
 $game_score=$_SESSION['score'];
-$session_array = array("session_number"=>$session_number,"survey_url"=>$dest, "game_score"=>$game_score);
+$session_array = array("session_number"=>$session_number,"survey_url"=>$dest, "game_score"=>$game_score, "show_popup"=>$show_popup);
 
 
 $loader = new Twig_Loader_Filesystem(__DIR__ . '/templates');

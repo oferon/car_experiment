@@ -59,6 +59,15 @@ function saveRatingDialog(client_score)
     client.open("POST", "gamefiles/php/saveClickData.php");
     client.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     client.send(postdata);
+    
+    if(client_score===-999) // user decided to bail out...
+    {
+        var data= { show_popup : 76 };
+        var client = new XMLHttpRequest();
+        client.open("POST","gamefiles/php/setShowPopup.php");  
+        client.send(data);  
+    }
+    
 
     var boxes = document.getElementsByClassName("score_cbox");
     
@@ -66,8 +75,6 @@ function saveRatingDialog(client_score)
     {
         boxes[i].checked = false;
     }
-
-
 
     var dialog = document.getElementById("rating_dialog");
     dialog.style.display = "none";
