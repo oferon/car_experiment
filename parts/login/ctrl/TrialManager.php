@@ -10,9 +10,9 @@ namespace carexperiment\parts\login\controller;
 
 include_once __DIR__ . '/../../game/gamefiles/php/includes/DbConnectInfo.php';
 
-class SQLUserManager {
+class TrialManager {
 
-    static function createUser() {
+    static function getNextTrialTime() {
 
         $dbinfo = \DbConnectInfo::getDBConnectInfoObject();
 
@@ -25,23 +25,38 @@ class SQLUserManager {
         }
 
         //Find if there is a username/password matching the input
-        $user_insert_q = "INSERT INTO `user` VALUES (null,'AUTO','USER','ok@ok.com',now(),'AUTO CREATE')";
+        $next_trial_start_q = "SELECT TIME_TO_SEC(TIMEDIFF(start,now())),TIME_TO_SEC(TIMEDIFF(end,now())) FROM `gametrials` WHERE end > NOW() ORDER BY start LIMIT 1";
         
-        if (!$stmt = $mysqli->prepare($user_insert_q)) {
+        if (!$stmt = $mysqli->prepare($next_trial_start_q)) {
             $this->throwDBExceptionOnError($mysqli->error, $mysqli->errno);
         }
 
         if (!$stmt->execute()) {
             $this->throwDBExceptionOnError($mysqli->error, $mysqli->errno);
         }
-
-        $new_user_id = $stmt->insert_id;
-
+        
+        
+        $diff = new \stdClass();
+        $diff->start = -1;
+        $diff->end = -1;
+        
+        
+        if( ! $stmt->bind_result($diff->start,$diff->end))
+        {
+            $this->throwDBExceptionOnError($mysqli->error, $mysqli->errno);
+        }
+        
+        if( ! $stmt->fetch())
+        {
+            $diff->start = -1;
+            $diff->end = -1;
+        }
+        
         $stmt->free_result();
         $stmt->close();
         $mysqli->close();
         
-        return $new_user_id;
+        return $diff;
     }
 
     protected function throwDBExceptionOnError($errmsg, $errno) {

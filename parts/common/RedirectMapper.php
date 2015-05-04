@@ -23,6 +23,7 @@ class RedirectMapper{
 		$this->targets['game'] = "http://$host/$root/parts/game/game.php";
                 $this->targets['explain'] = "http://$host/$root/parts/game/explain.php";
                 $this->targets['login'] = "http://$host/$root/parts/login/login.php";
+                $this->targets['wait'] = "http://$host/$root/parts/login/waitfortrial.php";
                 $this->targets['logout'] = "http://$host/$root/parts/login/ctrl/LogoutController.php";
                 //$this->targets['debrief'] = "http://ofer.hunter.cuny.edu/research/cargame-simulation-debriefing";
                 $this->targets['debrief'] = "http://$host/$root/parts/game/debriefing.php";

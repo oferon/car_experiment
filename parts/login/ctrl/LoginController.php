@@ -6,9 +6,9 @@ include_once(__DIR__ . '/../../common/RedirectMapper.php');
 include_once('UserController.php');
 include_once __DIR__ . '/SQLUserManager.php';
 
-use \carexperiment\parts\login\controller\UserController as UserController;
-use \carexperiment\parts\common\RedirectMapper as RedirectMapper;
-use u311\carexperiment\login\ctrl\SQLUserManager as SQLUserManager;
+use carexperiment\parts\login\controller\UserController as UserController;
+use carexperiment\parts\common\RedirectMapper as RedirectMapper;
+use carexperiment\parts\login\controller\SQLUserManager as SQLUserManager;
 
 define("E_DEST", "http://localhost/carexperiment/parts/login/login.php");
 
@@ -17,8 +17,9 @@ session_start();
 unset($_SESSION['login_err']);
 unset($_SESSION['user']);
 unset($_SESSION['user_id']);
-$_SESSION['score']=0;
-$_SESSION['show_popup']=13;
+unset($_SESSION['score']);
+unset($_SESSION['show_popup']);
+
 session_regenerate_id();
 
 $ctrl = new LoginController();
@@ -62,12 +63,12 @@ class LoginController
 
             $user_info = $user_ctrl->processLogin($username, $password);
             
-            if ($user_info == NULL) {
+            
+            if (is_null($user_info)) {
                 $this->failure("Login failed");
             }
-            
+           
             $new_user_id = SQLUserManager::createUser();
-            
             
             $_SESSION['user'] = $user_info->name;
             $_SESSION['user_id'] = $new_user_id;
@@ -92,6 +93,8 @@ class LoginController
         $rmap = new RedirectMapper();
 
         header('Location: ' . $rmap->getDestination($this->dest_code));
+        
+        exit();
     }
 
     private function failure($error_txt) {
@@ -103,6 +106,8 @@ class LoginController
         $url = E_DEST . $destination_code;
 
         header('Location: ' . $url);
+        
+        exit();
     }
 
 }

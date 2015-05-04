@@ -22,6 +22,8 @@ $template_name = 'floppy.js.twig';
 Twig_Autoloader::register();
 
 $session_number = 1;
+$show_popup = true;
+$game_score=0;
 
 if( isset($_SESSION['session_num']) && is_numeric($_SESSION['session_num'])){
     $session_number = $_SESSION['session_num'];
@@ -31,6 +33,9 @@ if( isset($_SESSION['show_popup']) && is_numeric($_SESSION['show_popup'])){
     $show_popup = $_SESSION['show_popup'];
 }
 
+if( isset($_SESSION['score']) && is_numeric($_SESSION['score'])){
+    $game_score = $_SESSION['score'];
+}
 
 
 $dest = './survey.php';
@@ -94,7 +99,7 @@ switch ($session_number) {
         break;
 }
 
-$game_score=$_SESSION['score'];
+
 $session_array = array("session_number"=>$session_number,"survey_url"=>$dest, "game_score"=>$game_score, "show_popup"=>$show_popup);
 
 

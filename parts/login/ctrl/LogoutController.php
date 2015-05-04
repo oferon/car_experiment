@@ -1,5 +1,7 @@
 <?php
 
+namespace carexperiment\parts\login\controller;
+
 session_start();
 session_unset();
 session_destroy();
