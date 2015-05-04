@@ -12,6 +12,10 @@ include_once __DIR__ . '/../../game/gamefiles/php/includes/DbConnectInfo.php';
 
 class TrialManager {
 
+    /**Get the start and end difference between NOW and the closest trial
+     * 
+     * @return \stdClass
+     */
     static function getNextTrialTime() {
 
         $dbinfo = \DbConnectInfo::getDBConnectInfoObject();
@@ -56,6 +60,9 @@ class TrialManager {
         $stmt->close();
         $mysqli->close();
         
+        /*
+         * The return value contains to elements, start and end in seconds
+         */
         return $diff;
     }
 

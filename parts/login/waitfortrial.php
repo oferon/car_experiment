@@ -7,7 +7,7 @@ require_once __DIR__ . '/../ext/twig/lib/Twig/Autoloader.php';
 
 session_start();
 
-$wait_time = "Unknow";
+$wait_time_str = "Unknow";
 
 if( isset($_SESSION['trial_start']))
 {

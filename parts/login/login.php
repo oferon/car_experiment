@@ -16,8 +16,14 @@ unset($_SESSION['trial_start']);
 
 $error_txt = '';
 
+/*
+ * Get difference from now to start and end.
+ */
 $diff = TrialManager::getNextTrialTime();
 
+/*
+ * If the nearest start is in the future. Redirect to the wait page
+ */
 if( $diff->start > 0 )
 {
     $_SESSION['trial_start'] = $diff->start;
@@ -26,12 +32,18 @@ if( $diff->start > 0 )
     exit();
 }
 
+/*
+ * If the end difference is negative. There is no trial to do atm
+ */
 if( $diff->end < 0 )
 {
     echo "There are no pending trials.";
     exit();
 }
 
+/*
+ * Otherwise, display the login page.
+ */
 if (isset($_SESSION['login_err'])) {
     if (!empty($_SESSION['login_err'])) {
         $error_txt = $_SESSION['login_err'];
