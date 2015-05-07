@@ -15,7 +15,6 @@ action_codes = { coin_collect: 1000,  shuttle_choice_detour : 2000, shuttle_choi
 rnd,
 new_junction=false,
 isGamePaused = false,
-overide=false,
 feedbacks,
 feedbacks_num,
 frameid,
@@ -23,7 +22,7 @@ canvas,
 ctx,
 width,
 height,
-bird_offset=0,
+car_offset=0,
 hit=100,
 coins=0,
 shuttleChoice=false,
@@ -106,7 +105,7 @@ shuttlebtn,
 detourbtn,
 
 /**
-* The car
+* The bird
 */
 bird = {
 
@@ -124,14 +123,14 @@ gravity: 0.25,
 _jump: 4.6,
 
 /**
-* Makes the car "flap" and jump
+* Makes the bird "flap" and jump
 */
 jump: function() {
 this.velocity = -this._jump;
 },
 
 /**
-* Update sprite animation and position of car
+* Update sprite animation and position of bird
 */
 update: function() {
 // make sure animation updates and plays faster in gamestate
@@ -139,12 +138,12 @@ var n = currentstate === states.Splash ? 10 : 5;
 this.frame += frames % n === 0 ? 1 : 0;
 this.frame %= this.animation.length;
 
-// in splash state make car hover up and down and set rotation to zero
+// in splash state make bird hover up and down and set rotation to zero
 if (currentstate === states.Splash) {
 this.y = height - 280 + 5*Math.cos(frames/10);
 this.rotation = 0;
 } else if (currentstate === states.Junction) {
-this.y = bird_offset + height - 180 + 5*Math.cos(frames/10);
+this.y = car_offset + height - 180 + 5*Math.cos(frames/10);
 this.rotation = 0;
 this.x=75;//135;
 }
@@ -156,16 +155,24 @@ this.y += this.velocity;
 
 
 
-// change to the score state when car touches the ground
+// change to the score state when bird touches the ground
 
 if (this.y >= height - s_fg.height-10) {
 this.y = height - s_fg.height-10;
 //this.rotation =0.3;
 this.velocity = 0;
 } 
+/*
+if (this.y >= height - s_fg.height-10) {
+this.y = height - s_fg.height-10;
+if (currentstate === states.Game) {
+currentstate = states.Score;
+}
+// sets velocity to jump speed for correct rotation
+this.velocity = this._jump;
+} */
 
-
-// when car lack upward momentum increment the rotation angle
+// when bird lack upward momentum increment the rotation angle
 
 if(this.velocity==0) this.rotation=0;
 else if(this.velocity>0) this.rotation=0.4;
@@ -175,7 +182,7 @@ else if(this.velocity<0) this.rotation=-0.4;
 },
 
 /**
-* Draws car with rotation to canvas ctx
+* Draws bird with rotation to canvas ctx
 *
 * @param  {CanvasRenderingContext2D} ctx the context used for drawing
 */
@@ -186,7 +193,7 @@ ctx.translate(this.x, this.y);
 ctx.rotate(this.rotation);
 
 var n = this.animation[this.frame];
-// draws the car with center in origo
+// draws the bird with center in origo
 s_bird[n].draw(ctx, -s_bird[n].width/2, -s_bird[n].height/2);
 
 ctx.restore();
@@ -239,9 +246,9 @@ var p = this._pipes[i];
 
 
 
-if(p.x==60){
+if(p.x==60){//bird.x-p.x<-10 && bird.x-p.x>10){
 
-var x=Math.floor(bird.y) - Math.floor(p.y) - 300;
+var x=Math.floor(bird.y) - Math.floor(p.y) - 300;//-(358-bird.y);//-p.y;//-p.height;
 if(x<0)x=999;
 if(x<120){score++; coins++; hit=0; Report_user_action(action_codes['coin_collect'],stage-1); }
 
@@ -314,7 +321,7 @@ this.setBGGradient(hour);
 
 function reset_game_vars(){
 
-bird_offset=0;
+car_offset=0;
 hit=100;
 shuttleChoice=false;
 shuttle_delay=0;
@@ -349,7 +356,7 @@ function onpress(evt) {
 
 switch (currentstate) {
 
-    // change state and update car velocity
+    // change state and update bird velocity
     case states.Splash:
         currentstate = states.Game;
         bird.jump();
@@ -375,6 +382,7 @@ switch (currentstate) {
                 junction_choice=false;
                 junction_shuttle_positioning=true;
             }
+        //window.open('http://twitter.com/share?url=' + homeUrl + '&text=I scored ' + score +  ' on FlappyJS!!&hashtags=flappybird,flappy')
         }
 
         if (detourbtn.x < mx && mx < detourbtn.x + detourbtn.width && detourbtn.y < my && my < detourbtn.y + detourbtn.height) {
@@ -386,12 +394,12 @@ switch (currentstate) {
                 junction_choice=false;
                 junction_taking_detour1=true;
             }
-            
+            //window.open('http://twitter.com/share?url=' + homeUrl + '&text=I scored ' + score +  ' on FlappyJS!!&hashtags=flappybird,flappy')
         }
-        
+        //bird.jump();
     break;
 
-    // update car velocity
+    // update bird velocity
     case states.Game:
         bird.jump();
     break;
@@ -409,6 +417,21 @@ switch (currentstate) {
 
         pipes.reset();
         currentstate = states.Splash;
+        /*  
+        if (sharebtn.x < mx && mx < sharebtn.x + sharebtn.width && sharebtn.y < my && my < sharebtn.y + sharebtn.height) {
+        //location.hash='share'
+        window.open('http://twitter.com/share?url=' + homeUrl + '&text=I scored ' + score +  ' on FlappyJS!!&hashtags=flappybird,flappy')
+        }
+
+        else {
+        // 			// check if within
+        //	if (okbtn.x < mx && mx < okbtn.x + okbtn.width &&	okbtn.y < my && my < okbtn.y + okbtn.height) {
+        pipes.reset();
+        currentstate = states.Splash;
+
+        //location.hash='game'
+        //		}
+        }*/
     break;
 
 }
@@ -534,7 +557,7 @@ frameid = window.requestAnimationFrame(loop, canvas);
 }
 
 /**
-* Update foreground, car and pipes position
+* Update foreground, bird and pipes position
 */
 function update() {
     frames++;
@@ -576,7 +599,7 @@ backgroundFx.update();
 }
 
 /**
-* Draws car and all pipes and assets to the canvas
+* Draws bird and all pipes and assets to the canvas
 */
 function render() {
     // draw background color
@@ -595,6 +618,7 @@ function render() {
     //s_bg.draw(ctx, s_bg.width, height - s_bg.height);
 
     pipes.draw(ctx);
+    //bird.draw(ctx);
 
     // draw foreground sprites
     s_fg.draw(ctx, fgpos, height - s_fg.height+100);
@@ -635,18 +659,20 @@ if (currentstate === states.Game) trial_time++;
 
 if (currentstate === states.Junction) {
 
+
+
 // first, take the car to the junction
 if(junction_before_choice){
-    if(bird_offset==0)bird_offset=100;  // this set the y offset of the car on the road
-    if(bird_offset>2)bird_offset-=2; // lifting the car up, slowly toward the junction
-    s_junction.drawX(ctx,  0, height - 500, x_offset, 0); // drawX = function(ctx, x, y, x_offset, y_offset)
-    var w5=width/5;
-    if(x_offset<w5) x_offset++;
-        else{ // we reached the junction!
-            junction_before_choice=false;
-            junction_choice=true;
-            new_junction=true;
-        }
+if(car_offset==0)car_offset=100;  // this set the y offset of the car on the road
+if(car_offset>2)car_offset-=2; // lifting the car up, slowly toward the junction
+s_junction.drawX(ctx,  0, height - 500, x_offset, 0); // drawX = function(ctx, x, y, x_offset, y_offset)
+var w5=width/5;
+if(x_offset<w5) x_offset++;
+    else{ // we reached the junction!
+    junction_before_choice=false;
+    junction_choice=true;
+    new_junction=true;
+    }
     }
 
     if(junction_choice){ // the car is now at the junction, with car offset lifting it slightly until it reaches the right position waiting 
@@ -672,96 +698,107 @@ if(junction_before_choice){
             case 5: s_buttons.Shuttle_5stars.draw(ctx, shuttlebtn.x, shuttlebtn.y); break;
             case 6: s_buttons.Shuttle.draw(ctx, shuttlebtn.x, shuttlebtn.y); break;
         }
-        */  
+        */
+   
+
     } 
 
 
 
     if(shuttleChoice){
+    // ajaxFunction(1,2,3);
     junction_choice=false;
-    // we now deal with moving the car up, and the image right to place the care at the loading dock waiting spot
-    if(junction_shuttle_positioning){ 
-        var w2=width/1.2;
-        if(x_offset<w2) {
-            x_offset+=2;
-            bird.rotation=-0.4;
-            s_junction.drawX(ctx, 0, height - 500, x_offset, 0);
-            if(bird_offset>-190)bird_offset-=2;
-            }
-            else { 
-                bird.rotation=0; 
-                junction_wait_for_shuttle=true;
-                junction_shuttle_positioning=false;
-            }           
+    if(junction_shuttle_positioning){ // we now deal with moving the car up, and the image right to place the care at the loading dock waiting spot
+    var w2=width/1.2;
+    if(x_offset<w2) {
+        x_offset+=2;
+        bird.rotation=-0.4;
+        s_junction.drawX(ctx, 0, height - 500, x_offset, 0);
+        if(car_offset>-190)car_offset-=2;
+        }
+        else { 
+        bird.rotation=0; 
+        junction_wait_for_shuttle=true;
+        junction_shuttle_positioning=false;
+        }
+        //s_junction.draw(ctx, x_offset+i+width2 - s_splash.width/2+50, height - 500);
+
         }
 
 
-        if(junction_wait_for_shuttle){
-            shuttle_delay++;
-            bird.rotation=0;
-            s_junction.drawX(ctx, 0, height - 500, x_offset, 0);
-          // the shuttle has arrived  
-            if(shuttle_delay>shuttle_wait){
-                if(shuttle_speed===shuttle_speed_high) s_shuttleX.draw(ctx, shuttle_retract + width2*1.8, height - 410);// shuttle_retract + 500+x_offset+width2 - s_splash.width/2+50, height - 410);
-                else if(shuttle_speed===shuttle_speed_low)s_shuttleO.draw(ctx, shuttle_retract + width2*1.8, height - 410);
-                else s_shuttle.draw(ctx, shuttle_retract + width2*1.8, height - 410);
-          // reverse shuttle toward the car:  
-                if(shuttle_retract>-width/1.4)shuttle_retract-=shuttle_speed;
-          // cross the lake!
-                else if(shuttle_forward<width*1.3){
-                    shuttle_forward+=shuttle_speed;
-                    x_offset+=shuttle_speed;
-                }
-                else{
-                    detourChoice=false;
-                    shuttleChoice=false;
-                    shuttle_forward=0;
-                    shuttle_retract=0;
-                    shuttle_delay=0;
-                    delays=false;
-                    x_offset=0;
-                    second_x_offset=0;
-                    y_offset=0;
-                    bird.rotation=0;
-                    second_y_offset=0;
-                    bird_offset=0;
-                    junction_wait_for_shuttle=false;
-                    currentstate = states.Game;                   
-                    if(popup) showDialog();
-                }
+        if(junction_wait_for_shuttle){//second_x_offset>400){
+        shuttle_delay++;
+        bird.rotation=0;
+        s_junction.drawX(ctx, 0, height - 500, x_offset, 0);
+        if(shuttle_delay>shuttle_wait){
+        if(shuttle_speed===shuttle_speed_high) s_shuttleX.draw(ctx, shuttle_retract + width2*1.8, height - 410);// shuttle_retract + 500+x_offset+width2 - s_splash.width/2+50, height - 410);
+        else if(shuttle_speed===shuttle_speed_low)s_shuttleO.draw(ctx, shuttle_retract + width2*1.8, height - 410);
+        else s_shuttle.draw(ctx, shuttle_retract + width2*1.8, height - 410);
+        if(shuttle_retract>-width/1.4)shuttle_retract-=shuttle_speed;
+        else if(shuttle_forward<width*1.3){
+
+            shuttle_forward+=shuttle_speed;
+            x_offset+=shuttle_speed;
             }
             else {
-                if(delays) s_text_delays.draw(ctx, okbtn.x+10, okbtn.y-170);
-                else s_buttons.Share.draw(ctx, okbtn.x+10, okbtn.y-170); // Share is wait...
+            detourChoice=false;
+            shuttleChoice=false;
+            shuttle_forward=0;
+            shuttle_retract=0;
+            shuttle_delay=0;
+            delays=false;
+
+            x_offset=0;
+            second_x_offset=0;
+            y_offset=0;
+            bird.rotation=0;
+            second_y_offset=0;
+            car_offset=0;
+
+            junction_wait_for_shuttle=false;
+            
+            currentstate = states.Game;
+            if(popup) showDialog();
+            }
+            }
+            else {
+            if(delays) s_text_delays.draw(ctx, okbtn.x+10, okbtn.y-170);
+            else s_buttons.Share.draw(ctx, okbtn.x+10, okbtn.y-170); // Share is wait...
+
             } 
-        }
-    } // end shuttle choice
+
+            }
 
 
+            }
 
             if(detourChoice){
-            // first drive down     
-                if(junction_taking_detour1){ 
-                    bird.rotation=0.5;
-                    s_junction.drawX(ctx, 0, 0, second_x_offset*1.22, second_x_offset*1.7);
-                    if(second_x_offset<530) second_x_offset+=1.6;// 3;
-                    else{junction_taking_detour1=false; junction_taking_detour2=true;}
-                }
-            
-            // second part, flat
-                if(junction_taking_detour2){  
-                    bird.rotation=0;
-                    s_junction.drawX(ctx, 0, 0, second_x_offset*1.22, 900);
-                    if(second_x_offset<800) second_x_offset+=1.5;
-                    else{y_offset=0; junction_taking_detour2=false; junction_taking_detour3=true;}
+
+            if(junction_taking_detour1){ // first drive down 
+            bird.rotation=0.5;
+            //s_junction.drawX(ctx, 0, height - 500, second_x_offset*1.22, second_x_offset*1.7);
+            s_junction.drawX(ctx, 0, 0, second_x_offset*1.22, second_x_offset*1.7);
+            //if(second_x_offset<height*1.1) second_x_offset+=0.4;
+                if(second_x_offset<530) second_x_offset+=1.6;// 3;
+                else{junction_taking_detour1=false; junction_taking_detour2=true;}
                 }
 
-            // last drive up 
-                if(junction_taking_detour3){ 
+                if(junction_taking_detour2){ // second part, flat 
+                bird.rotation=0;
+                //s_junction.drawX(ctx, 0, height - 500, second_x_offset*1.22, height*1.1*1.7);
+                s_junction.drawX(ctx, 0, 0, second_x_offset*1.22, 900);
+                //if(second_x_offset<height*1.65) second_x_offset+=0.5;
+                    if(second_x_offset<800) second_x_offset+=1.5;
+                    else{y_offset=0; junction_taking_detour2=false; junction_taking_detour3=true;}
+                    }
+
+                    if(junction_taking_detour3){ // last drive up 
                     bird.rotation=-0.9;
-                    s_junction.drawX(ctx, 0, 0, second_x_offset*1.22, 900-y_offset);                           
-                    if(y_offset<816) y_offset+=3;//1.6;
-                    else{ // reset vars
+                    //s_junction.drawX(ctx, 0, height - 500, second_x_offset*1.22, (height*1.1*1.7)-y_offset);
+                    s_junction.drawX(ctx, 0, 0, second_x_offset*1.22, 900-y_offset);
+                    //if(y_offset<height*1.7) y_offset+=0.5;
+                        if(y_offset<816) y_offset+=3;//1.6;
+                        else{
                         junction_taking_detour3=false;
                         detourChoice=false;
                         shuttleChoice=false;
@@ -770,31 +807,35 @@ if(junction_before_choice){
                         y_offset=0;
                         bird.rotation=0;
                         second_y_offset=0;
-                        bird_offset=0;
+                        car_offset=0;
+
                         i=0;
                         currentstate = states.Game;
-                    }   // end reset vars
-                }  // end last drive up
-            } // end detour choice	
-    } // end currentstate === states.Junction
+                        }
+                        }
+                        }	
 
 
-    if (currentstate === states.Score) {
-    // draw gameover text and score board
-        s_text.GameOver.draw(ctx, width2 - s_text.GameOver.width/2, height-400);
-        s_score.draw(ctx, width2 - s_score.width/2, height-340);
-        s_buttons.Ok.draw(ctx, okbtn.x, okbtn.y);
-        s_buttons.Share.draw(ctx, sharebtn.x, sharebtn.y);
+                        }
 
-    // draw score and best inside the score board
-        s_numberS.draw(ctx, width2-47, height-304, score, null, 10);
-        s_numberS.draw(ctx, width2-47, height-262, best, null, 10);
 
-    } else {
-    // draw score to top of canvas
-    if(currentstate!=states.Junction) s_numberB.draw(ctx, null, 20, score, width2);
-    }
-    bird.draw(ctx);
+                        if (currentstate === states.Score) {
+                        // draw gameover text and score board
+
+                        s_text.GameOver.draw(ctx, width2 - s_text.GameOver.width/2, height-400);
+                        s_score.draw(ctx, width2 - s_score.width/2, height-340);
+                        s_buttons.Ok.draw(ctx, okbtn.x, okbtn.y);
+                        s_buttons.Share.draw(ctx, sharebtn.x, sharebtn.y);
+
+                        // draw score and best inside the score board
+                        s_numberS.draw(ctx, width2-47, height-304, score, null, 10);
+                        s_numberS.draw(ctx, width2-47, height-262, best, null, 10);
+
+                        } else {
+                        // draw score to top of canvas
+                        if(currentstate!=states.Junction) s_numberB.draw(ctx, null, 20, score, width2);
+                        }
+                        bird.draw(ctx);
 }
 
 
@@ -836,7 +877,6 @@ function report_score(score)
             else if(ind===3) {shuttle_wait=shuttle_wait_long; shuttle_speed=shuttle_speed_high; popup=false;}
             else if(ind===4) {shuttle_wait=shuttle_wait_med; shuttle_speed=shuttle_speed_low; popup=true; }
             else  {shuttle_wait=shuttle_wait_short; shuttle_speed=shuttle_speed_low;popup=false; } 
-            if(overide)popup=false;
         }
         else get_performance();
         
@@ -868,40 +908,45 @@ function showGameCanvas()
 }
 
 
-
-
 function get_performance() // choice will return 1 for shuttle and 2 for detour
 {
-    feedbacks_num=0;
-    var client = new XMLHttpRequest();
-    client.open("GET","gamefiles/php/retrieve_performance.php"); //Math.random is used to make the URL unique to prevent caching
-    client.send();
-    client.onreadystatechange = function() {
-        if (client.readyState == 4 && client.status == 200) {
-            feedbacks=client.responseText; // need to parse...
-            var obj = JSON.parse(feedbacks);
-            feedbacks_num=Number(obj.data);
-
-                    // use the number to set performance
-            if(feedbacks_num>0.7)
-            {
-              shuttle_wait=shuttle_wait_short; 
-              shuttle_speed=shuttle_speed_high;
-            }
-
-            else if(feedbacks_num>0.4)
-            {
-              shuttle_wait=shuttle_wait_med; 
-              shuttle_speed=shuttle_speed_med;  
-            }
-
-            else
-            {
-              shuttle_wait=shuttle_wait_long; 
-              shuttle_speed=shuttle_speed_low;  
-            }
-
+feedbacks_num=0;
+var client = new XMLHttpRequest();
+client.open("GET","gamefiles/php/retrieve_performance.php"); //Math.random is used to make the URL unique to prevent caching
+client.send();
+client.onreadystatechange = function() {
+    if (client.readyState == 4 && client.status == 200) {
+        feedbacks=client.responseText; // need to parse...
+        var obj = JSON.parse(feedbacks);
+        feedbacks_num=Number(obj.data);
+        
+                // use the number to set performance
+        if(feedbacks_num>0.7)
+        {
+          shuttle_wait=shuttle_wait_short; 
+          shuttle_speed=shuttle_speed_high;
         }
+
+        else if(feedbacks_num>0.4)
+        {
+          shuttle_wait=shuttle_wait_med; 
+          shuttle_speed=shuttle_speed_med;  
+        }
+
+        else
+        {
+          shuttle_wait=shuttle_wait_long; 
+          shuttle_speed=shuttle_speed_low;  
+        }
+
+
+        
+        
+        
     }
+}
+
+
+
 }
 
