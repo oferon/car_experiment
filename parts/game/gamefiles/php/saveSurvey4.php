@@ -90,6 +90,20 @@ try {
     
 }
 
+foreach( $fields as $field )
+{
+    $fname = $field->getName();
+    if(strcmp($fname, "Q3") == 0)
+    {
+       $fval = $field->getValue(); 
+       if(strcmp($fval, "Yes") == 0) {$_SESSION['show_popup'] = 8;}
+       else {$_SESSION['show_popup'] = 0;}
+    }
+       
+}
+
+
+
 $_SESSION['session_num'] = 5;
 
 $url = $mapper->getDestination('game');

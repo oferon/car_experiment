@@ -119,15 +119,6 @@ function initSprites(img) {
 		Shuttle_high_negative_trend: new Sprite(img, 1030, 758, 65, 45),
 
 
-
-
-
-
-
-
-
-
-
 		//Shuttle: new Sprite(img,  0, 305, 65, 55), // trends
 		//Detour: new Sprite(img, 70, 305, 65, 55),  // trends
 	}
