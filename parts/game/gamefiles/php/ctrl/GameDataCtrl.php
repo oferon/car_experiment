@@ -94,7 +94,7 @@ class GameDataCtrl extends DataCtrl {
     function get_performance()
     {
         //scores submitted during last 3 minutes: 
-        $scores_submitted="select count(*) from U311.flappy_car where game_state>15 and time-( now() - INTERVAL 3 minute)>0 and time-( now() - INTERVAL 20 second)<0 and user_action<6 and user_action>0; ";
+        $scores_submitted="select count(*) from U311.flappy_car where time-( now() - INTERVAL 3 minute)>0 and time-( now() - INTERVAL 20 second)<0 and user_action<6 and user_action>0; ";
         if( ! $stmt = mysqli_prepare($this->mysqli_con, $scores_submitted)){
             $this->throwDBError($this->mysqli_con->error, $this->mysqli_con->errno);
         }
@@ -111,7 +111,7 @@ class GameDataCtrl extends DataCtrl {
 
        
        //shuttle choices during last 2 minutes: 
-       $shuttle_choices="select count(*) from flappy_car where game_state>15 and time-( now() - INTERVAL 3 minute)>0 and time-( now() - INTERVAL 20 second)<0 and user_action=3000; ";
+       $shuttle_choices="select count(*) from flappy_car where time-( now() - INTERVAL 3 minute)>0 and time-( now() - INTERVAL 20 second)<0 and user_action=3000; ";
         if( ! $stmt = mysqli_prepare($this->mysqli_con, $shuttle_choices)){
             $this->throwDBError($this->mysqli_con->error, $this->mysqli_con->errno);
         }
@@ -129,7 +129,7 @@ class GameDataCtrl extends DataCtrl {
        
        
        //detour choices during last 2 minutes: 
-       $detour_choices="select count(*) from flappy_car where game_state>15 and time-( now() - INTERVAL 3 minute)>0 and time-( now() - INTERVAL 20 second)<0 and user_action=2000; ";
+       $detour_choices="select count(*) from flappy_car where time-( now() - INTERVAL 3 minute)>0 and time-( now() - INTERVAL 20 second)<0 and user_action=2000; ";
        if( ! $stmt = mysqli_prepare($this->mysqli_con, $detour_choices)){
             $this->throwDBError($this->mysqli_con->error, $this->mysqli_con->errno);
         }

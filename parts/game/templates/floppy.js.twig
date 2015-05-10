@@ -59,7 +59,8 @@ shuttle_wait_med=500,
 shuttle_wait_short=100,
 */
 ind=1, // index to shuttle choices (first, second, etc.)
-
+every_other_pop=2,
+first_pop=true,        
 session={{ session_number }},
 popup={{ show_popup }},
 
@@ -727,7 +728,12 @@ if(junction_before_choice){
                     bird_offset=0;
                     junction_wait_for_shuttle=false;
                     currentstate = states.Game;                   
-                    if(popup) showDialog();
+                    if(popup===1) showDialog();
+                    else if(popup===3 && first_pop){first_pop=false; showDialog();}
+                    else if(popup===2){
+                        every_other_pop++; 
+                        if(every_other_pop%2)showDialog();
+                    }
                 }
             }
             else {
@@ -827,7 +833,8 @@ function report_score(score)
 
     function set_shuttle_performance() // choice will return 1 for shuttle and 2 for detour
     { 
-        
+       get_performance();
+       /*
         
         if(session===1)
         {
@@ -841,6 +848,7 @@ function report_score(score)
         else get_performance();
         
         ind++;
+        */
     }
     
     
@@ -872,6 +880,7 @@ function showGameCanvas()
 
 function get_performance() // choice will return 1 for shuttle and 2 for detour
 {
+    var performance_duration;
     feedbacks_num=0;
     var client = new XMLHttpRequest();
     client.open("GET","gamefiles/php/retrieve_performance.php"); //Math.random is used to make the URL unique to prevent caching
@@ -882,7 +891,12 @@ function get_performance() // choice will return 1 for shuttle and 2 for detour
             var obj = JSON.parse(feedbacks);
             feedbacks_num=Number(obj.data);
 
-                    // use the number to set performance
+            performance_duration=((-25)*feedbacks_num + 22)/2;
+            shuttle_wait=performance_duration*60;
+            shuttle_speed=-0.112*performance_duration+2.455;
+            if(shuttle_speed<0.3)shuttle_speed=0.3;
+            /*
+            // use the number to set performance
             if(feedbacks_num>0.7)
             {
               shuttle_wait=shuttle_wait_short; 
@@ -900,7 +914,7 @@ function get_performance() // choice will return 1 for shuttle and 2 for detour
               shuttle_wait=shuttle_wait_long; 
               shuttle_speed=shuttle_speed_low;  
             }
-
+*/
         }
     }
 }

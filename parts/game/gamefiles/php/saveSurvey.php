@@ -97,7 +97,9 @@ foreach( $fields as $field )
     if(strcmp($fname, "Q3") == 0)
     {
        $fval = $field->getValue(); 
-       if(strcmp($fval, "Yes") == 0) {$_SESSION['show_popup'] = 8;}
+       if(strcmp($fval, "Yes") == 0) {$_SESSION['show_popup'] = 1;}
+       elseif(strcmp($fval, "Half") == 0) {$_SESSION['show_popup'] = 2;}
+       elseif(strcmp($fval, "Once") == 0) {$_SESSION['show_popup'] = 3;}
        else {$_SESSION['show_popup'] = 0;}
     }
        
