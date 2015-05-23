@@ -75,6 +75,36 @@ junction_taking_detour2=false, // the car takes the detour 2. starit on bottom o
 junction_taking_detour3=false, // the car takes the detour 3. up the lake towards the end
 
 
+/*
+*
+*/
+FeedbackChart = {
+    
+    x: 0,
+    y: 0,
+    img: new Image(),
+    src_url : "./gamefiles/res/feedbackchart.png",
+    
+    init: function()
+    {
+        this.img.onload = function()
+        {
+            console.log("Chart loaded");
+        };
+        
+        this.reload();
+    },    
+    draw: function(ctx)
+    {
+        console.log("Drawing chart");
+        ctx.drawImage(this.img, 0, 0);
+    },
+    reload: function()
+    {
+        console.log("Loading new image");
+        this.img.src = this.src_url;
+    }
+},
 
 scrollTextPos = 0,
 fgpos = 0,
@@ -312,7 +342,6 @@ this.setBGGradient(hour);
 };
 
 
-
 function reset_game_vars(){
 
 bird_offset=0;
@@ -420,97 +449,102 @@ evt.preventDefault();
 * Starts and initiate the game
 */
 function main() {
-// create canvas and set width/height
-canvas = document.createElement("canvas");
+    // create canvas and set width/height
+    canvas = document.createElement("canvas");
 
-canvas.setAttribute('id','gamecanvas');
+    canvas.setAttribute('id','gamecanvas');
 
-width = window.innerWidth;
-height = window.innerHeight;
+    width = window.innerWidth;
+    height = window.innerHeight;
 
-//var evt = "touchStart";
-if (width >= 500) {
-    width  = 320;
-    height = 480;
-    canvas.style.border = "1px solid #000";
-    //evt = "mousedown";
-}
+    //var evt = "touchStart";
+    if (width >= 500) {
+        width  = 320;
+        height = 480;
+        canvas.style.border = "1px solid #000";
+        //evt = "mousedown";
+    }
 
-// // prevent elastic scrolling
-// document.body.addEventListener('touchmove',function(event){
-//   event.preventDefault();
-// },false);	// end body:touchmove
+    // // prevent elastic scrolling
+    // document.body.addEventListener('touchmove',function(event){
+    //   event.preventDefault();
+    // },false);	// end body:touchmove
 
 
-// listen for input event
-//document.addEventListener(evt, onpress);
-/*
-* 01/19/2015 Daniel F. Added event handler to canvas only.
-*/
-canvas.addEventListener("touchstart", onpress)
-canvas.addEventListener("mousedown", onpress)
+    // listen for input event
+    //document.addEventListener(evt, onpress);
+    /*
+    * 01/19/2015 Daniel F. Added event handler to canvas only.
+    */
+    canvas.addEventListener("touchstart", onpress)
+    canvas.addEventListener("mousedown", onpress)
 
-canvas.width = width;
-canvas.height = height;
-scrollTextPos = width*1.5;
-if (!(!!canvas.getContext && canvas.getContext("2d"))) {
-alert("Your browser doesn't support HTML5, please update to latest version");
-}
-ctx = canvas.getContext("2d");
+    canvas.width = width;
+    canvas.height = height;
+    scrollTextPos = width*1.5;
+    if (!(!!canvas.getContext && canvas.getContext("2d"))) {
+        alert("Your browser doesn't support HTML5, please update to latest version");
+    }
+    ctx = canvas.getContext("2d");
 
-currentstate = states.Splash;
-// append canvas to document
-document.body.appendChild(canvas);
+    currentstate = states.Splash;
+    
+    // append canvas to document
+    document.body.appendChild(canvas);
 
-// initate graphics and buttons
-var img = new Image();
-img.onload = function() {
-initSprites(this);
+    FeedbackChart.init();
+    
+    
+    // initate graphics and buttons
+    var img = new Image();
+    img.onload = function() {
+    
+        initSprites(this);
 
-backgroundFx.update();
+        backgroundFx.update();
 
-okbtn = {
-x: (width - s_buttons.Ok.width)/2,
-y: height - 200,
-width: s_buttons.Ok.width,
-height: s_buttons.Ok.height
-}
+        okbtn = {
+            x: (width - s_buttons.Ok.width)/2,
+            y: height - 200,
+            width: s_buttons.Ok.width,
+            height: s_buttons.Ok.height
+        }
 
-sharebtn = {
-x: (width - s_buttons.Share.width)/2,
-y: height - 150,
-width: s_buttons.Share.width,
-height: s_buttons.Share.height,
-}
+        sharebtn = {
+            x: (width - s_buttons.Share.width)/2,
+            y: height - 150,
+            width: s_buttons.Share.width,
+            height: s_buttons.Share.height,
+        }
 
-shuttlebtn = {
-x: 200,//(width - s_buttons.Shuttle.width)/2,
-y: 187,//height - 150,
-width: s_buttons.Shuttle.width,
-height: s_buttons.Shuttle.height,
-}
+        shuttlebtn = {
+            x: 200,//(width - s_buttons.Shuttle.width)/2,
+            y: 187,//height - 150,
+            width: s_buttons.Shuttle.width,
+            height: s_buttons.Shuttle.height,
+        }
 
-detourbtn = {
-x: 200,//(width - s_buttons.Detour.width)/2,
-y: 375,//height - 150,
-width: s_buttons.Detour.width,
-height: s_buttons.Detour.height,
-}
+        detourbtn = {
+            x: 200,//(width - s_buttons.Detour.width)/2,
+            y: 375,//height - 150,
+            width: s_buttons.Detour.width,
+            height: s_buttons.Detour.height,
+        }
 
-run();
-}
+        run();
+    }
 
-var date = new Date;
-var hour = date.getHours();
-var month = date.getMonth();
-img.src = "./gamefiles/res/sheet.png";
+    var date = new Date;
+    var hour = date.getHours();
+    var month = date.getMonth();
+    img.src = "./gamefiles/res/sheet.png";
 }
 
 
 function debugLog(txt) {
-if(window.location.hash) {
-document.getElementById("consoleMe").innerHTML = txt;
-}
+    if(window.location.hash) {
+        document.getElementById("consoleMe").innerHTML = txt;
+    }
 }
 
 /**
@@ -546,6 +580,8 @@ function update() {
         if (stage < 7){
             currentstate = states.Junction;
             junction_before_choice = true;
+            console.log("Time to get a new chart");
+            FeedbackChart.reload();
         }
         else{
             report_score(score);
@@ -655,6 +691,7 @@ if(junction_before_choice){
         s_junction.drawX(ctx,  0, height - 500, x_offset, 0); // we now draw the buttons of the 'shuttle' and 'detour' when the car is waiting:
         s_buttons.Detour.draw(ctx, detourbtn.x, detourbtn.y);
         s_buttons.Shuttle.draw(ctx, shuttlebtn.x, shuttlebtn.y);
+        FeedbackChart.draw(ctx);
 
         if(new_junction) {
             //s_buttons.Shuttle.draw(ctx, shuttlebtn.x, shuttlebtn.y);

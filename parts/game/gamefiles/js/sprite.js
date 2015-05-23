@@ -1,7 +1,6 @@
 var
 
 // Sprite vars //
-
 s_bird,
 s_bg,
 s_bg2,
