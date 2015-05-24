@@ -80,7 +80,7 @@ function initSprites(img) {
 	s_bg.color = "#70C5CF"; // #70C5CF save background color
 	s_fg = new Sprite(img, 200, 50, 112,  56);
 
-	s_pipeNorth = new Sprite(img, 251, 50, 0, 0);
+	s_pipeNorth = new Sprite(img, 251, 50, 28, 200);
 	s_pipeSouth = new Sprite(img, 277, 50, 28, 200);
 	s_shuttle= new Sprite(img,181, 260, 80, 50);
 	s_shuttleX= new Sprite(img,171, 330, 90, 40);//170, 260, 200, 100);

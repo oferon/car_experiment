@@ -9,15 +9,8 @@ session_start();
 
 $mapper = new RedirectMapper();
 
-if (!isset($_SESSION['user_id'])) {
-    
-    $url = $mapper->getDestination('login');
-    header('Location: ' . $url );
-    exit();
-}
-
 $page_cont = array('logout_url' => $mapper->getDestination('logout'));
-$template_name = 'floppy.js.twig';
+$template_name = 'serverstatevars.js.twig';
 
 Twig_Autoloader::register();
 
