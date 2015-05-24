@@ -352,13 +352,61 @@ function reset_game_vars() {
     best = localStorage.getItem("best") || 0;
 
 }
+
+function ontouch(e)
+{
+    e.preventDefault();
+    console.log("Touch event");
+    
+    var touches = e.changedTouches;
+    
+    if( touches.length > 0 )
+    {
+        var first_touch = touches[0];
+        
+        mx = first_touch.clientX();
+        my = first_touch.clientY();
+        
+        onpress(mx,my);  
+    }
+}
+
+function onmouse(e)
+{
+
+    e.preventDefault();
+
+    var posx = 0;
+    var posy = 0;
+    if (!e) {
+        var e = window.event;
+    }
+    if (e.pageX || e.pageY) {
+        posx = e.pageX;
+        posy = e.pageY;
+    }
+    else if (e.clientX || e.clientY) {
+        posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+        posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+    }
+    
+    var rect = canvas.getBoundingClientRect ();
+    var x = rect.left + document.body.scrollLeft + document.documentElement.scrollLeft;
+    var y = rect.top + document.body.scrollTop + document.documentElement.scrollTop;
+    
+    mx = posx -x;
+    my = posy - y;
+    
+    onpress(mx,my);
+}
+
 /**
  * Called on mouse or touch press. Update and change state
  * depending on current game state.
  *
  * @param  {MouseEvent/TouchEvent} evt tho on press event
  */
-function onpress(evt) {
+function onpress(mx,my) {
 //document.getElementById("consoleMe").innerHTML = evt.type;
 
     switch (currentstate) {
@@ -370,14 +418,6 @@ function onpress(evt) {
             break;
 
         case states.Junction:
-
-            var mx = evt.offsetX, my = evt.offsetY;
-            //Cheat:
-            //if(mx<10){shuttle_delay=shuttle_wait; shuttle_speed=2;}
-            if (mx == null || my == null) {
-                mx = evt.touches[0].clientX;
-                my = evt.touches[0].clientY;
-            }
 
             if (shuttlebtn.x < mx && mx < shuttlebtn.x + shuttlebtn.width && shuttlebtn.y < my && my < shuttlebtn.y + shuttlebtn.height) {
                 //location.hash='share'
@@ -412,21 +452,14 @@ function onpress(evt) {
 
             // change state if event within okbtn bounding box
         case states.Score:
-            //	if (evt.type != 'mousedown') return;
-            // get event position
-            var mx = evt.offsetX, my = evt.offsetY;
-
-            if (mx == null || my == null) {
-                mx = evt.touches[0].clientX;
-                my = evt.touches[0].clientY;
-            }
+            
 
             pipes.reset();
             currentstate = states.Splash;
             break;
 
     }
-    evt.preventDefault();
+    
 }
 
 /**
@@ -460,8 +493,8 @@ function main() {
     /*
      * 01/19/2015 Daniel F. Added event handler to canvas only.
      */
-    canvas.addEventListener("touchstart", onpress)
-    canvas.addEventListener("mousedown", onpress)
+    canvas.addEventListener("touchstart", ontouch);
+    canvas.addEventListener("mousedown", onmouse);
 
     canvas.width = width;
     canvas.height = height;
