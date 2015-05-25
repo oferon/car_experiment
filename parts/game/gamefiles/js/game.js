@@ -318,10 +318,26 @@ function ontouch(e)
 
     if (touches.length > 0)
     {
-        var first_touch = touches[0];
+        var touch = touches[0];
 
-        mx = first_touch.clientX();
-        my = first_touch.clientY();
+        var posx = 0;
+        var posy = 0;
+        
+        if (touch.pageX || touch.pageY) {
+            posx = touch.pageX;
+            posy = touch.pageY;
+        }
+        else if (touch.clientX || touch.clientY) {
+            posx = touch.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            posy = touch.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+        }
+
+        var rect = canvas.getBoundingClientRect();
+        var x = rect.left + document.body.scrollLeft + document.documentElement.scrollLeft;
+        var y = rect.top + document.body.scrollTop + document.documentElement.scrollTop;
+
+        mx = posx - x;
+        my = posy - y;
 
         onpress(mx, my);
     }
