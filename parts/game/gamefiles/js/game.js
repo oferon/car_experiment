@@ -5,11 +5,8 @@
  
  */
 
-var action_codes = {
-    coin_collect: 1000,
-    shuttle_choice_detour: 2000,
-    shuttle_choice_ride: 3000
-},
+var
+        action_codes = {coin_collect: 1000, shuttle_choice_detour: 2000, shuttle_choice_ride: 3000},
 rnd,
         new_junction = false,
         isGamePaused = false,
@@ -23,7 +20,7 @@ rnd,
         height,
         bird_offset = 0,
         hit = 100,
-        coins = 0,
+        coin_count = 0,
         shuttleChoice = false,
         shuttle_delay = 0,
         shuttle_wait = 200, //0*Math.random(),
@@ -59,7 +56,7 @@ rnd,
         first_pop = true,
         session = ServerStateVars.session_num,
         popup = ServerStateVars.popup,
-// these are the state variables of the car around the lake: 
+        /* these are the state variables of the car around the lake: */
         junction_before_choice = false, // during this time the car will go to the junction
         junction_choice = false, // during this time the car waits at the junction
         junction_shuttle_positioning = false, // durign this time the car position itself on the dock after shuttle choice
@@ -68,10 +65,6 @@ rnd,
         junction_taking_detour2 = false, // the car takes the detour 2. starit on bottom of lake
         junction_taking_detour3 = false, // the car takes the detour 3. up the lake towards the end
 
-
-        /*
-         *
-         */
         FeedbackChart = {
             x: 0,
             y: 0,
@@ -101,22 +94,13 @@ scrollTextPos = 0,
         fgpos = 0,
         frames = 0,
         score = ServerStateVars.score,
-        pipeGapMin = 90,
-        pipeGapMax = 150,
-        pipeGap = pipeGapMax,
         best = localStorage.getItem("best") || 0,
-// State vars //
-
         currentstate,
-        states = {
-            Splash: 0, Game: 1, Score: 2, Junction: 3,
-        },
-// Game objects //
-
-        /**
-         * Ok button initiated in main()
-         */
-        okbtn,
+        states = {Splash: 0, Game: 1, Score: 2, Junction: 3},
+/**
+ * Ok button initiated in main()
+ */
+okbtn,
         /**
          * Share button initiated in main()
          */
@@ -129,6 +113,8 @@ scrollTextPos = 0,
         bird = {
             x: 60,
             y: 0,
+            w: 30,
+            h: 12,
             frame: 0,
             velocity: 0,
             animation: [0, 1, 2, 1], // animation sequence
@@ -137,6 +123,16 @@ scrollTextPos = 0,
             radius: 12,
             gravity: 0.25,
             _jump: 4.6,
+            //Store sprites inside the car object
+            _s_car: [],
+            /* Init the car object */
+            init: function (img)
+            {
+                this._s_car.push(new Sprite(img, 145, 165, this.w, this.h));
+                this._s_car.push(new Sprite(img, 145, 178, this.w, this.h));
+                this._s_car.push(new Sprite(img, 145, 191, this.w, this.h));
+
+            },
             /**
              * Makes the car "flap" and jump
              */
@@ -147,12 +143,12 @@ scrollTextPos = 0,
              * Update sprite animation and position of car
              */
             update: function () {
-// make sure animation updates and plays faster in gamestate
+                // make sure animation updates and plays faster in gamestate
                 var n = currentstate === states.Splash ? 10 : 5;
                 this.frame += frames % n === 0 ? 1 : 0;
                 this.frame %= this.animation.length;
 
-// in splash state make car hover up and down and set rotation to zero
+                // in splash state make car hover up and down and set rotation to zero
                 if (currentstate === states.Splash) {
                     this.y = height - 280 + 5 * Math.cos(frames / 10);
                     this.rotation = 0;
@@ -169,16 +165,16 @@ scrollTextPos = 0,
 
 
 
-// change to the score state when car touches the ground
+                    // change to the score state when car touches the ground
 
                     if (this.y >= height - s_fg.height - 10) {
                         this.y = height - s_fg.height - 10;
-//this.rotation =0.3;
+                        //this.rotation =0.3;
                         this.velocity = 0;
                     }
 
 
-// when car lack upward momentum increment the rotation angle
+                    // when car lack upward momentum increment the rotation angle
 
                     if (this.velocity == 0)
                         this.rotation = 0;
@@ -196,110 +192,73 @@ scrollTextPos = 0,
              */
             draw: function (ctx) {
                 ctx.save();
-// translate and rotate ctx coordinatesystem
+                // translate and rotate ctx coordinatesystem
                 ctx.translate(this.x, this.y);
                 ctx.rotate(this.rotation);
 
                 var n = this.animation[this.frame];
-// draws the car with center in origo
-                s_bird[n].draw(ctx, -s_bird[n].width / 2, -s_bird[n].height / 2);
-
+                // draws the car with center in origo
+                this._s_car[n].draw(ctx, -this._s_car[n].width / 2, -this._s_car[n].height / 2);
                 ctx.restore();
             }
         },
-/**
- * The pipes
+/*
+ * Coin class
  */
-pipes = {
-    _pipes: [],
-    /**
-     * Empty pipes array
-     */
-    reset: function () {
-        this._pipes = [];
-        pipeGap = pipeGapMax;
+coins = {
+    _coins: [],
+    reset: function ()
+    {
+        this._coins = [];
     },
-    /**
-     * Create, push and update all pipes in pipe array
-     */
-    update: function () {
-// add new pipe each 100 frames
+    update: function ()
+    {
+        // Add a new coin every 100 frames
         if (frames % 100 === 0) {
-// calculate y position
-            var _y = height - (s_pipeSouth.height + s_fg.height + 120 + 200 * Math.random());
+            var _y = height - (s_coin.height + s_fg.height + 120 + 200 * Math.random());
 
-// create and push pipe to array
-            if (pipeGap > pipeGapMin) {
-                pipeGap = pipeGap - 5;
-            }
-
-            this._pipes.push({
-                gap: pipeGap,
+            this._coins.push({
                 x: 500,
                 y: _y,
-                width: s_pipeSouth.width,
-                height: s_pipeSouth.height
+                w: s_coin.width,
+                h: s_coin.height
             });
         }
-        for (var i = 0, len = this._pipes.length; i < len; i++) {
-            var p = this._pipes[i];
 
 
+        for (var i = 0, len = this._coins.length; i < len; i++) {
+            var c = this._coins[i];
 
+            //Collision detection
+            if (c.x < bird.x + bird.w &&
+                    c.x + c.w > bird.x &&
+                    c.y < bird.y + bird.h &&
+                    c.h + c.y > bird.y) {
 
-// Ofer's version starts here ----------------
+                c.x = 10000;
 
-
-
-            if (p.x == 60) {
-
-                var x = Math.floor(bird.y) - Math.floor(p.y) - 300;
-                if (x < 0)
-                    x = 999;
-                if (x < 120) {
-                    score++;
-                    coins++;
-                    hit = 0;
-                    Report_user_action(action_codes['coin_collect'], stage - 1);
-                }
-
+                score++;
+                coin_count++;
+                //Send coin collection message to the server
+                Report_user_action(action_codes['coin_collect'], stage - 1);
             }
 
 
-// Ofer's version ends here ----------------
 
-
-
-
-
-// move pipe and remove if outside of canvas
-            p.x -= 2;
-            if (p.x < -p.width) {
-                this._pipes.splice(i, 1);
+            c.x -= 2;
+            if (c.x < -c.w) {
+                this._coins.splice(i, 1);
                 i--;
                 len--;
+                //console.log("Coin removed");
             }
         }
     },
-    /**
-     * Draw all pipes to canvas context.
-     *
-     * @param  {CanvasRenderingContext2D} ctx the context used for drawing
-     */
     draw: function (ctx) {
-        for (var i = 0, len = this._pipes.length; i < len; i++) {
-            if (hit < 55 && i == 0)
-            {
 
-// glow effect
-                hit++;//=false;
-            }
-            else {
-                var p = this._pipes[i];
-                s_pipeSouth.draw(ctx, p.x, p.y);
-                //s_pipeNorth.draw(ctx, p.x, p.y + p.gap + p.height);
-            }
-//console.log(p)
+        for (var i = 0, len = this._coins.length; i < len; i++) {
+            var c = this._coins[i];
+            s_coin.draw(ctx, c.x, c.y);
         }
     }
 },
@@ -346,9 +305,6 @@ function reset_game_vars() {
     scrollTextPos = 0;
     fgpos = 0;
     frames = 0;
-    pipeGapMin = 90;
-    pipeGapMax = 150;
-    pipeGap = pipeGapMax;
     best = localStorage.getItem("best") || 0;
 
 }
@@ -357,17 +313,17 @@ function ontouch(e)
 {
     e.preventDefault();
     console.log("Touch event");
-    
+
     var touches = e.changedTouches;
-    
-    if( touches.length > 0 )
+
+    if (touches.length > 0)
     {
         var first_touch = touches[0];
-        
+
         mx = first_touch.clientX();
         my = first_touch.clientY();
-        
-        onpress(mx,my);  
+
+        onpress(mx, my);
     }
 }
 
@@ -389,15 +345,15 @@ function onmouse(e)
         posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
         posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
     }
-    
-    var rect = canvas.getBoundingClientRect ();
+
+    var rect = canvas.getBoundingClientRect();
     var x = rect.left + document.body.scrollLeft + document.documentElement.scrollLeft;
     var y = rect.top + document.body.scrollTop + document.documentElement.scrollTop;
-    
-    mx = posx -x;
+
+    mx = posx - x;
     my = posy - y;
-    
-    onpress(mx,my);
+
+    onpress(mx, my);
 }
 
 /**
@@ -406,7 +362,7 @@ function onmouse(e)
  *
  * @param  {MouseEvent/TouchEvent} evt tho on press event
  */
-function onpress(mx,my) {
+function onpress(mx, my) {
 //document.getElementById("consoleMe").innerHTML = evt.type;
 
     switch (currentstate) {
@@ -452,14 +408,14 @@ function onpress(mx,my) {
 
             // change state if event within okbtn bounding box
         case states.Score:
-            
 
-            pipes.reset();
+
+            coins.reset();
             currentstate = states.Splash;
             break;
 
     }
-    
+
 }
 
 /**
@@ -516,6 +472,8 @@ function main() {
     var img = new Image();
     img.onload = function () {
 
+        //Init the car and the rest of game sprites
+        bird.init(this);
         initSprites(this);
 
         backgroundFx.update();
@@ -554,7 +512,7 @@ function main() {
     var date = new Date;
     var hour = date.getHours();
     var month = date.getMonth();
-    img.src = "./gamefiles/res/sheet.png";
+    img.src = "./gamefiles/res/sheet52515.png";
 }
 
 
@@ -586,13 +544,13 @@ function loop()
 }
 
 /**
- * Update foreground, car and pipes position
+ * Update foreground, car and coins position
  */
 function update() {
     frames++;
-    if (trial_time > 700 && coins > 3) {
+    if (trial_time > 700 && coin_count > 3) {
         trial_time = 0;
-        coins = 0;
+        coin_count = 0;
         stage++;
         if (stage < 7) {
             currentstate = states.Junction;
@@ -622,7 +580,7 @@ function update() {
     }
 
     if (currentstate === states.Game) {
-        pipes.update();
+        coins.update();
     }
 
     bird.update();
@@ -630,7 +588,7 @@ function update() {
 }
 
 /**
- * Draws car and all pipes and assets to the canvas
+ * Draws car and all assets to the canvas
  */
 function render() {
     // draw background color
@@ -658,9 +616,7 @@ function render() {
             break;
     }
 
-    //s_bg.draw(ctx, s_bg.width, height - s_bg.height);
-
-    pipes.draw(ctx);
+    coins.draw(ctx);
 
     // draw foreground sprites
     s_fg.draw(ctx, fgpos, height - s_fg.height + 100);
