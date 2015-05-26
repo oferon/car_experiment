@@ -114,7 +114,7 @@ okbtn,
             x: 60,
             y: 0,
             w: 30,
-            h: 12,
+            h: 11,
             frame: 0,
             velocity: 0,
             animation: [0, 1, 2, 1], // animation sequence
@@ -128,9 +128,9 @@ okbtn,
             /* Init the car object */
             init: function (img)
             {
-                this._s_car.push(new Sprite(img, 145, 165, this.w, this.h));
-                this._s_car.push(new Sprite(img, 145, 178, this.w, this.h));
-                this._s_car.push(new Sprite(img, 145, 191, this.w, this.h));
+                this._s_car.push(new Sprite(img, 180, 165, this.w, this.h));
+                this._s_car.push(new Sprite(img, 180, 176, this.w, this.h));
+                this._s_car.push(new Sprite(img, 180, 187, this.w, this.h));
 
             },
             /**
@@ -528,7 +528,7 @@ function main() {
     var date = new Date;
     var hour = date.getHours();
     var month = date.getMonth();
-    img.src = "./gamefiles/res/sheet52515.png";
+    img.src = "./gamefiles/res/sheet52515_v2.png";
 }
 
 
