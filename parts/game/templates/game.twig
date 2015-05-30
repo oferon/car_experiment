@@ -1,57 +1,263 @@
 <!doctype html>
 <html lang="en" prefix="og: http://ogp.me/ns#">
-<head>
-	<meta charset="UTF-8"/>
-	<meta name="Description" content="HTML5 version of FlappyBird that runs on modern devices"/>
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="Description" content="HTML5 version of FlappyBird that runs on modern devices"/>
 
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, user-scalable=0"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, user-scalable=0"/>
 
-	<meta name="apple-mobile-web-app-capable" content="yes"/>
-	<meta name="mobile-web-app-capable" content="yes"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <meta name="mobile-web-app-capable" content="yes"/>
 
-	<meta property="og:title" content="FlappyJS - My Browser Version of FlappyBird"/>
-	<meta property="og:description" content="HTML5 version of FlappyBird that runs on modern devices"/>
-	<meta property="og:image" content="http://jewkesy.github.io/Flappy/images/thumbnail.png"/>
-	<meta property="og:url" content="http://jewkesy.github.io/Flappy/"/>
-	<meta property="og:type" content="website"/>
+        <meta property="og:title" content="FlappyJS - My Browser Version of FlappyBird"/>
+        <meta property="og:description" content="HTML5 version of FlappyBird that runs on modern devices"/>
+        <meta property="og:image" content="http://jewkesy.github.io/Flappy/images/thumbnail.png"/>
+        <meta property="og:url" content="http://jewkesy.github.io/Flappy/"/>
+        <meta property="og:type" content="website"/>
 
-	<title>FlappyJS - Browser Version of FlappyBird</title>
-	<link rel="stylesheet" href="./gamefiles/css/style.css"/>
-        
-        <script src="./serverstatevars.js.php"></script>
-	<script src="./gamefiles/js/sprite.js"></script>
+        <title>FlappyJS - Browser Version of FlappyBird</title>
+        <link rel="stylesheet" href="./gamefiles/css/style.css"/>
+
+        {#<script src="./serverstatevars.js.php"></script>
+        <script src="./gamefiles/js/sprite.js"></script>
         <script src="./gamefiles/js/flappycar.js"></script>
-	<script src="./gamefiles/js/game.js"></script>
-</head>
-<body>
-	<noscript>
-		<p>FlappyJS is a project I've been working on to bring FlappyBird to all devices.</p>
-		<p>Created from the ground up using HTML5, it runs in most mobile browsers.</p>
-		<p>I'm frequently updating the game with new features and bug fixes.</p>
-	</noscript>
+        <script src="./gamefiles/js/game.js"></script>#}
+    </head>
+    <body>
+        <noscript>
+        <p>FlappyJS is a project I've been working on to bring FlappyBird to all devices.</p>
+        <p>Created from the ground up using HTML5, it runs in most mobile browsers.</p>
+        <p>I'm frequently updating the game with new features and bug fixes.</p>
+        </noscript>
         <div> Current session number: {{session_number}}</div>
-	<div id='consoleMe'></div>
-	<div id='social'></div>
+        <div id='consoleMe'></div>
+        <div id='social'></div>
         <div id="rating_dialog">
             <div class="rating_txt">Please rate your shuttle experience</div>
-    
-             
+
+
             <input type="radio" class="score_cbox" name="score" onclick="saveRatingDialog(1)" value="1">1
             <input type="radio" class="score_cbox" name="score" onclick="saveRatingDialog(2)" value="2">2
             <input type="radio" class="score_cbox" name="score" onclick="saveRatingDialog(3)" value="3">3
             <input type="radio" class="score_cbox" name="score" onclick="saveRatingDialog(4)" value="4">4
             <input type="radio" class="score_cbox" name="score" onclick="saveRatingDialog(5)" value="5">5
-    
-    
-    
-           <!--  <div style="text-align: center;font-size: large">1 2 3 4 5</div> -->
+            
+
+
+            <!--  <div style="text-align: center;font-size: large">1 2 3 4 5</div> -->
             <div style="text-align: right">
                 <span class="rating_txt">Do not show again</span>
                 <input type="checkbox" id="rating_c_box" onclick="saveRatingDialog(-999)" >
             </div>
         </div>
-<!-- <input type="button" onclick="showDialog();" value="Show dialog"/> -->
-       
-</body>
+        <script src="./gamefiles/js/pixi.min.js" type="text/javascript"></script>
+        <script>
+            
+            var renderer;
+            var stage;
+            var g_width = 640;
+            var g_height = 480;
+            
+            var s_curb;
+            var s_stripes;
+            var s_bg;
+            var s_mnt;
+            var s_truck;
+            
+            var d_v = 0;
+            
+            var keyStates = {};
+            
+            Car = function() {
+                
+                
+                this.min_speed = 0;
+                this.pix_speed_ratio = 30;
+                
+                this.max_pix_frame = 10;
+            };
+            
+            car = new Car();
+            
+            var gas_pedal_pressed = false;
+           
+            window.addEventListener("keydown",handlekeydown);
+            
+            window.addEventListener("keyup",handlekeyup);
+            
+            window.onload = function()
+            {
+                main();
+            }
+            
+            
+            function main()
+            {
+                
+            
+            renderer = PIXI.autoDetectRenderer(g_width,g_height,{backgroundColor : 0x000000});
+                      
+            document.body.appendChild(renderer.view);
+            
+            // create the root of the scene graph
+            stage = new PIXI.Container();
+            
+            var loader = PIXI.loader;
+            loader.add("road_stage_1","./gamefiles/res/road_stage_1.png");
+            loader.add("curb","./gamefiles/res/curb.png");
+            loader.add("road_stripes","./gamefiles/res/roadstripes.png");
+            loader.add("mnt","./gamefiles/res/mnt.png");
+            loader.add("truck","./gamefiles/res/truck.png");
+            loader.on("complete",initSprites);
+            loader.load();
+            
+            }
+            
+            function initSprites(loader,res)
+            {
+               
+                var bg = res.road_stage_1.texture;
+                
+                s_bg = new PIXI.Sprite(bg);
+                             
+               
+                var curb = res.curb.texture;
+                
+                s_curb = new PIXI.extras.TilingSprite(curb,renderer.width,32);
+                //Compute the position based on the container dimentions 
+                //that will contain this element
+                s_curb.x = 0;
+                s_curb.y = s_bg.height - 30;
+                
+                var stripes = res.road_stripes.texture;
+                
+                s_stripes = new PIXI.extras.TilingSprite(stripes,s_bg.width,8);
+                //Compute the position based on the container dimentions 
+                //that will contain this element
+                s_stripes.x = 0;
+                s_stripes.y = s_bg.height * .65;
+                
+                //Adjust the container dimentions to fit the "stage"
+                s_bg.width = g_width;
+                s_bg.height = g_height * .6;
+                s_bg.x = 0;
+                s_bg.y = g_height - s_bg.height;
+                
+                console.log(s_bg.height);
+                
+                var t_mnt = res.mnt.texture;
+                
+                s_mnt = new PIXI.extras.TilingSprite(t_mnt,1024,256);
+                s_mnt.x = 0;
+                s_mnt.y = 0;
+                
+                
+                var truck_t = res.truck.texture;
+                s_truck = new PIXI.Sprite(truck_t);
+                s_truck.x = renderer.width * .3;
+                s_truck.y = 0;
+                s_truck.width *= .75;
+                s_truck.height *= .75;
+                
+                s_bg.addChild(s_curb);
+                s_bg.addChild(s_stripes);
+                s_bg.addChild(s_truck);
+                
+                stage.addChild(s_mnt);
+                stage.addChild(s_bg);
+                stage.addChild(s_truck);
+               
+                startGame();
+            }
+            
+            
+            function startGame()
+            {
+                console.log("Game starting");
+                requestAnimationFrame(animate);
+            }
+            
+            
+            function animate()
+            {
+                requestAnimationFrame(animate);
+                
+                update();
+                
+                renderer.render(stage);
+            }
+            
+            function update()
+            {
+                
+                
+                
+                s_mnt.tilePosition.x += -d_v/50;
+                s_curb.tilePosition.x += -d_v ;
+                s_stripes.tilePosition.x += -d_v ;
+                
+                if( keyStates[38])
+                {
+                     s_truck.y -= d_v/3;
+                }
+                
+                
+                if( keyStates[40])
+                {
+                     s_truck.y += d_v/3;
+                }
+                
+                if( keyStates[32])
+                {
+                      modify_speed(.05);
+                }
+                else
+                {
+                     modify_speed(-.07);
+                }
+                    
+            }
+            
+            
+            function handlekeydown(event)
+            {
+                key = event.keyCode;
+                
+                keyStates[key || e.which] = true;
+            }
+            
+            function handlekeyup(event)
+            {   
+                
+                key = event.keyCode;
+                
+                keyStates[key || e.which] = false;
+                
+            }
+            
+            function modify_speed(value)
+            {
+                
+                d_v += value;
+                
+                if( d_v > car.max_pix_frame )
+                {
+                    d_v = car.max_pix_frame;
+                }
+                
+                if( d_v < 0)
+                {
+                    d_v = 0;
+                }
+                
+                
+                
+                
+                
+            }
+            
+            
+        </script>
+    </body>
 </html>
 
