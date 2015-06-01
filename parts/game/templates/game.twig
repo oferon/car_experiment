@@ -65,6 +65,7 @@
             {
                 this.width = 100;
                 this.left_lim = 300;
+                this.driven = 0;
                
             };
             
@@ -76,6 +77,14 @@
                 this.sprite.position.y = 20;
             }
             
+            MilageIndicator = function()
+            {
+                this.text = "Miles Driven:";
+                this.sprite = new PIXI.Text(this.text,{ font: '15px Arial', fill: 'black' });
+                this.sprite.position.x = 500;
+                this.sprite.position.y = 60;
+            }
+            
             CoinSprite = function()
             {
                 this._textures = [];
@@ -84,10 +93,8 @@
             
             
             
-            var temp = new PIXI.Text("test",{ font: '15px Arial', fill: 'black' });
-            temp.position.x = 500;
-            temp.position.y = 40;
             
+                    
             var renderer;
             var stage;
             var g_width = 640;
@@ -99,48 +106,62 @@
             var s_mnt;
             var s_truck;
             var speedtext;
-            
+            var frames = 0;
+            var distance_to_drive = 2000;
             
             var d_v = 0;
             
             var keyStates = {};
             
-            var gamecomponents = {
-                 car: new Car(),
-                 road: new Road(),
-                
             
-            }
            
             
             
             car = new Car();
             road = new Road();
             speedtext = new SpeedIndicator();
+            milagetxt = new MilageIndicator();
             s_coin = new CoinSprite();
             
             coins = {
-                _coins : [],
+                _coins : new PIXI.Container(),
                 reset: function ()
                 {
-                    this._coins = [];
+                    this._coins.removeChilder();
                 },
                 add: function()
                 {
+                    console.log("Adding coin" + this._coins.width);
                     movie = new PIXI.extras.MovieClip(s_coin._textures);
                 
                     movie.play();
                     movie.animationSpeed = 0.5;
-                    movie.x = 400 * Math.random();
-                    movie.y = 300 * Math.random();
+                    movie.x = renderer.width +20;
+                    movie.y = road.left_lim + road.width * Math.random();
                     movie.gotoAndPlay(Math.random() * 8);
-                    this._coins.push(movie);
-                    stage.addChild(movie);
-                    
+                    this._coins.addChild(movie);
                 },
                 update: function()
                 {
+                    if( frames % 1000 === 0 )
+                    {
+                        this.add();
+                    };
                     
+                   
+                    
+                    for ( i = 0; i < this._coins.children.length; i++)
+                    {
+                        coin = this._coins.getChildAt(i);
+                        
+                        if( coin.x < 0 )
+                        {
+                             this._coins.removeChildAt(i); 
+                             console.log("Coin removed");
+                        }
+                        else
+                            coin.x -= d_v;
+                    }
                 }
                 
             };
@@ -169,9 +190,9 @@
             var loader = PIXI.loader;
             loader.add("road_stage_1","./gamefiles/res/road_stage_1.png");
             loader.add("curb","./gamefiles/res/curb.png");
-            loader.add("road_stripes","./gamefiles/res/roadstripes.png");
+            loader.add("road_stripes","./gamefiles/res/stripes_iso.png");
             loader.add("mnt","./gamefiles/res/mnt.png");
-            loader.add("truck","./gamefiles/res/truck.png");
+            loader.add("truck","./gamefiles/res/truckiso.png");
             loader.add("coin","gamefiles/res/coin.json");
             loader.on("complete",initSprites);
             
@@ -231,19 +252,19 @@
                 s_truck.width *= .75;
                 s_truck.height *= .75;
                 
+                
                 s_bg.addChild(s_curb);
                 s_bg.addChild(s_stripes);
-                s_bg.addChild(s_truck);
+               
                 
                 stage.addChild(s_mnt);
                 stage.addChild(s_bg);
+                stage.addChild(coins._coins);
                 stage.addChild(s_truck);
                 stage.addChild(speedtext.sprite);
-                stage.addChild(temp);
-                for( i = 0; i < 100; i++)
-                {
-                    coins.add();
-                }
+                stage.addChild(milagetxt.sprite);
+                
+                
                 
 
                
@@ -270,9 +291,11 @@
             
             function update()
             {
-                
-                
-                
+                if( d_v > 0 )
+                {
+                    coins.update();
+                } 
+                 
                 s_mnt.tilePosition.x += -d_v/50;
                 s_curb.tilePosition.x += -d_v ;
                 s_stripes.tilePosition.x += -d_v ;
@@ -282,6 +305,7 @@
                     if( s_truck.y > road.left_lim )
                     {
                      s_truck.y -= d_v/3;
+                     s_truck.x += d_v/3;
                     }            
                     else
                     {
@@ -295,6 +319,7 @@
                     if( s_truck.y <  road.left_lim + road.width )
                     {
                         s_truck.y += d_v/3;
+                        s_truck.x -= d_v/3;
                     }
                     else
                     {
@@ -312,8 +337,13 @@
                      modify_speed(-.01);
                 }
                 
+                if( keyStates[37])
+                {
+                      modify_speed(-.1);
+                }
+                
                 speedtext.sprite.text = "Speed: " + parseInt(d_v * car.max_mph/car.max_pix_frame) + " mph";
-                temp.text = s_truck.y;
+                
                     
             }
             
