@@ -14,7 +14,9 @@ var
         s_buttons,
         s_numberS,
         s_numberB,
-        s_coin;
+        s_coin,
+        s_star,
+        s_gray_star;
 
 /**
  * Simple sprite class
@@ -78,6 +80,8 @@ function initSprites(img) {
     s_text_delays = new Sprite(img, 159, 241, 40, 14);
 
     s_coin = new Sprite(img, 276, 220, 33, 33);
+    s_star= new Sprite(img, 0, 320, 8, 8);
+    s_gray_star= new Sprite(img, 8, 320, 8, 8);
 
     s_text = {
         FlappyBird: new Sprite(img, 59, 164, 76, 20),

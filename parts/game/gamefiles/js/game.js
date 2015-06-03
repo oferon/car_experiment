@@ -5,7 +5,7 @@
  
  */
 
-var
+var     shuttle_feedback = [0,0,0],
         action_codes = {coin_collect: 1000, shuttle_choice_detour: 2000, shuttle_choice_ride: 3000},
         rnd,
         new_junction = false,
@@ -562,8 +562,9 @@ function update() {
         if (stage < 7) {
             currentstate = states.Junction;
             junction_before_choice = true;
-            console.log("Time to get a new chart");
-            FeedbackChart.reload();
+            console.log("Time to get a new feedback data");
+            //Calling json to get new data
+            get_shuttle_stats();
         }
         else {
             report_score(score);
@@ -686,7 +687,13 @@ function render() {
 
             s_junction.drawX(ctx, 0, height - 500, x_offset, 0); // we now draw the buttons of the 'shuttle' and 'detour' when the car is waiting:
             s_buttons.Detour.draw(ctx, detourbtn.x, detourbtn.y);
-            if(score>3)s_buttons.Shuttle.draw(ctx, shuttlebtn.x, shuttlebtn.y);
+            if(score>3){ 
+                s_buttons.Shuttle.draw(ctx, shuttlebtn.x, shuttlebtn.y);
+                draw_stars(shuttle_feedback[0],shuttle_feedback[1],shuttle_feedback[2]);
+            }
+            
+            
+            
             FeedbackChart.draw(ctx);
 
             if (new_junction) {
@@ -935,6 +942,34 @@ function showGameCanvas()
 }
 
 
+function get_shuttle_stats()
+{
+    var client = new XMLHttpRequest();
+    client.open("GET", "gamefiles/php/getShuttleStats.php"); //Math.random is used to make the URL unique to prevent caching
+    client.send();
+    client.onreadystatechange = function () {
+        if (client.readyState == 4 && client.status == 200) {
+            stats = client.responseText; // need to parse...
+            var json_obj = JSON.parse(stats);
+            
+            /*
+             * Paring JSON object
+             * Make sure to handle errors!!!
+             */
+            
+            max = 6
+            min = 0;
+            
+            shuttle_feedback[0] = Math.floor(Math.random() * (max - min)) + min;
+            shuttle_feedback[1] = Math.floor(Math.random() * (max - min)) + min;
+            shuttle_feedback[2] = Math.floor(Math.random() * (max - min)) + min;
+            
+
+        }
+    }
+
+}
+
 
 
 function get_performance() // choice will return 1 for shuttle and 2 for detour
@@ -961,3 +996,28 @@ function get_performance() // choice will return 1 for shuttle and 2 for detour
 }
 
 
+function draw_stars(x,y,z)
+{
+    offset=52;
+    if(x){
+        for(i=0;i<5;i++){
+            if(i<x) s_star.draw(ctx,shuttlebtn.x+offset+14*i, shuttlebtn.y+40);
+            else s_gray_star.draw(ctx,shuttlebtn.x+offset+14*i, shuttlebtn.y+40);
+        }
+    }
+    
+    if(y){
+        for(i=0;i<5;i++){
+            if(i<y) s_star.draw(ctx,shuttlebtn.x+offset+14*i, shuttlebtn.y+54);
+            else s_gray_star.draw(ctx,shuttlebtn.x+offset+14*i, shuttlebtn.y+54);
+        }
+    }
+    
+    if(z){
+        for(i=0;i<5;i++){
+            if(i<z) s_star.draw(ctx,shuttlebtn.x+offset+14*i, shuttlebtn.y+68);
+            else s_gray_star.draw(ctx,shuttlebtn.x+offset+14*i, shuttlebtn.y+68);
+        }
+    }
+    
+}
