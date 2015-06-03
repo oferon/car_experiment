@@ -2,9 +2,9 @@
 class DbConnectInfo {
 
     private $username = "root";
-    private $password = "root"; // "U311_mysql";
+    private $password = ""; // "U311_mysql";
     private $server =  "127.0.0.1";//"localhost";
-    private $port = "8889";//"3306";
+    private $port = "3306";//"3306";
     private $databasename = "U311";
     // Hold an instance of the class
     private static $instance;
