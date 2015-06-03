@@ -150,6 +150,18 @@ class GameDataCtrl extends DataCtrl {
       
        return $performance;    
     }
+    
+    
+    function getSystemStats()
+    {
+        $data = new stdClass();
+        $data->scores_num=array(0,0,0);
+        $data->scores_avg=array(0,0,0);
+        $data->shuttle_rides=array(0,0,0); 
+        $data->detours_num=array(0,0,0);
+        
+        return $data;
+    }
 }
 
 
