@@ -65,7 +65,7 @@
             {
                 this.width = 100;
                 this.left_lim = 300;
-                this.driven = 0;
+                this.dist_driven = 0;
                
             };
             
@@ -102,7 +102,7 @@
             
             var s_curb;
             var s_stripes;
-            var s_bg;
+            var s_road;
             var s_mnt;
             var s_truck;
             var speedtext;
@@ -135,7 +135,7 @@
                     movie = new PIXI.extras.MovieClip(s_coin._textures);
                 
                     movie.play();
-                    movie.animationSpeed = 0.5;
+                    movie.animationSpeed = 0.4;
                     movie.x = renderer.width +20;
                     movie.y = road.left_lim + road.width * Math.random();
                     movie.gotoAndPlay(Math.random() * 8);
@@ -188,7 +188,7 @@
             stage = new PIXI.Container();
             
             var loader = PIXI.loader;
-            loader.add("road_stage_1","./gamefiles/res/road_stage_1.png");
+            loader.add("road","./gamefiles/res/roadsurface.png");
             loader.add("curb","./gamefiles/res/curb.png");
             loader.add("road_stripes","./gamefiles/res/stripes_iso.png");
             loader.add("mnt","./gamefiles/res/mnt.png");
@@ -209,34 +209,28 @@
                 }
                 
                
-                var bg = res.road_stage_1.texture;
+                var t_road = res.road.texture;
                 
-                s_bg = new PIXI.Sprite(bg);
-                             
-               
-                var curb = res.curb.texture;
+                s_road = new PIXI.Sprite(t_road);
                 
-                s_curb = new PIXI.extras.TilingSprite(curb,renderer.width,32);
-                //Compute the position based on the container dimentions 
-                //that will contain this element
-                s_curb.x = 0;
-                s_curb.y = s_bg.height - 30;
+                s_road.width = g_width;
+        
+               //Adjust the container dimentions to fit the "stage"
+                s_road.x = 0;
+                s_road.y = g_height - s_road.height;
+              
                 
                 var stripes = res.road_stripes.texture;
                 
-                s_stripes = new PIXI.extras.TilingSprite(stripes,s_bg.width,8);
+                s_stripes = new PIXI.extras.TilingSprite(stripes,s_road.width,8);
                 //Compute the position based on the container dimentions 
                 //that will contain this element
                 s_stripes.x = 0;
-                s_stripes.y = s_bg.height * .65;
+                s_stripes.y = s_road.height * .5;
                 
-                //Adjust the container dimentions to fit the "stage"
-                s_bg.width = g_width;
-                s_bg.height = g_height * .6;
-                s_bg.x = 0;
-                s_bg.y = g_height - s_bg.height;
                 
-                console.log(s_bg.height);
+                
+                
                 
                 var t_mnt = res.mnt.texture;
                 
@@ -253,12 +247,12 @@
                 s_truck.height *= .75;
                 
                 
-                s_bg.addChild(s_curb);
-                s_bg.addChild(s_stripes);
+               
+                s_road.addChild(s_stripes);
                
                 
                 stage.addChild(s_mnt);
-                stage.addChild(s_bg);
+                stage.addChild(s_road);
                 stage.addChild(coins._coins);
                 stage.addChild(s_truck);
                 stage.addChild(speedtext.sprite);
@@ -297,15 +291,14 @@
                 } 
                  
                 s_mnt.tilePosition.x += -d_v/50;
-                s_curb.tilePosition.x += -d_v ;
                 s_stripes.tilePosition.x += -d_v ;
                 
                 if( keyStates[38])
                 {
                     if( s_truck.y > road.left_lim )
                     {
-                     s_truck.y -= d_v/3;
-                     s_truck.x += d_v/3;
+                     s_truck.y -= d_v/4;
+                     s_truck.x += d_v/4;
                     }            
                     else
                     {
@@ -318,8 +311,8 @@
                 {
                     if( s_truck.y <  road.left_lim + road.width )
                     {
-                        s_truck.y += d_v/3;
-                        s_truck.x -= d_v/3;
+                        s_truck.y += d_v/4;
+                        s_truck.x -= d_v/4;
                     }
                     else
                     {
