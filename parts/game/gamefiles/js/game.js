@@ -952,6 +952,7 @@ function get_shuttle_stats()
             stats = client.responseText; // need to parse...
             var json_obj = JSON.parse(stats);
             
+            var avg_array = json_obj.data.scores_avg;
             /*
              * Paring JSON object
              * Make sure to handle errors!!!
@@ -960,9 +961,9 @@ function get_shuttle_stats()
             max = 6
             min = 0;
             
-            shuttle_feedback[0] = Math.floor(Math.random() * (max - min)) + min;
-            shuttle_feedback[1] = Math.floor(Math.random() * (max - min)) + min;
-            shuttle_feedback[2] = Math.floor(Math.random() * (max - min)) + min;
+            shuttle_feedback[0] = avg_array[0];//Math.floor(Math.random() * (max - min)) + min;
+            shuttle_feedback[1] = avg_array[1];//Math.floor(Math.random() * (max - min)) + min;
+            shuttle_feedback[2] = avg_array[2];//Math.floor(Math.random() * (max - min)) + min;
             
 
         }
