@@ -168,77 +168,44 @@ class GameDataCtrl extends DataCtrl {
         $results = []; 
         $value = 0;
         
-        $query = "SELECT avg(user_action) as value FROM flappy_car WHERE time > DATE_SUB(now(),INTERVAL ? minute) and user_action > 0 AND user_action < 6";
+        $l_int = 0;
+        $h_int = 0;
+        
+        $query = "SELECT avg(user_action) as value FROM flappy_car WHERE time > DATE_SUB(now(),INTERVAL ? minute) AND time < DATE_SUB(now(),INTERVAL ? minute) AND user_action > 0 AND user_action < 6";
 
         if (!$stmt = $this->mysqli_con->prepare($query)) {
             $this->throwDBExceptionOnError($this->mysqli_con->errno, $this->mysqli_con->error);
         }
 
-        if (!$stmt->bind_param('i',$interval)) {
-            $this->throwDBExceptionOnError($this->mysqli_con->errno, $this->mysqli_con->error);
-        }
-
-        if (!$stmt->execute()) {
-            $this->throwDBExceptionOnError($stmt->errno, $stmt->error);
-        }
-        
-        if( ! $stmt->bind_result($value)){
-            $this->throwDBExceptionOnError($stmt->errno, $stmt->error);
-        }   
-        
-        if( ! $stmt->fetch())
+        for( $i = 0; $i < 3; $i++ )
         {
-            $this->throwDBExceptionOnError($stmt->errno, $stmt->error);
-        }
         
-        $results[] = $value;
-        
-        
-        /*
-         * Get second interval
-         */
-        $interval2 = $interval * 2;
-        if (!$stmt->bind_param('i',$interval2 )) {
-            $this->throwDBExceptionOnError($this->mysqli_con->errno, $this->mysqli_con->error);
-        }
+            $l_int = $h_int;
+            $h_int += $interval;
+            $value = 0;
+            
+            if (!$stmt->bind_param('ii', $h_int, $l_int)) {
+                $this->throwDBExceptionOnError($this->mysqli_con->errno, $this->mysqli_con->error);
+            }
 
-        if (!$stmt->execute()) {
-            $this->throwDBExceptionOnError($stmt->errno, $stmt->error);
-        }
-        
-        if( ! $stmt->bind_result($value)){
-            $this->throwDBExceptionOnError($stmt->errno, $stmt->error);
-        }   
-        
-        if( ! $stmt->fetch())
-        {
-            $this->throwDBExceptionOnError($stmt->errno, $stmt->error);
-        }
-        
-        $results[] = $value;
-        
-        /*
-         * Get third interval
-         */
-        $interval3 = $interval * 3;
-        if (!$stmt->bind_param('i',$interval3 )) {
-            $this->throwDBExceptionOnError($this->mysqli_con->errno, $this->mysqli_con->error);
-        }
+            if (!$stmt->execute()) {
+                $this->throwDBExceptionOnError($stmt->errno, $stmt->error);
+            }
 
-        if (!$stmt->execute()) {
-            $this->throwDBExceptionOnError($stmt->errno, $stmt->error);
+            if (!$stmt->bind_result($value)) {
+                $this->throwDBExceptionOnError($stmt->errno, $stmt->error);
+            }
+
+            if (!$stmt->fetch()) {
+                $this->throwDBExceptionOnError($stmt->errno, $stmt->error);
+            }
+            
+            if (is_null($value)) {
+                $value = 0;
+            }
+
+            $results[] = $value;
         }
-        
-        if( ! $stmt->bind_result($value)){
-            $this->throwDBExceptionOnError($stmt->errno, $stmt->error);
-        }   
-        
-        if( ! $stmt->fetch())
-        {
-            $this->throwDBExceptionOnError($stmt->errno, $stmt->error);
-        }
-        
-        $results[] = $value;
         
         $stmt->close();
         
